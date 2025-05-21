@@ -1,6 +1,6 @@
 import { onRequest } from "firebase-functions/v2/https";
+import { defineSecret } from 'firebase-functions/params';
 import * as logger from "firebase-functions/logger";
-import { JWT_SECRET_KEY, JWT_ALGORITHM } from "../settings"
 import {
   registerWorkers,
   updateAssistance,
@@ -10,80 +10,83 @@ import { UserData, AssistanceData, VerifyBioRequest, EncryptDataRequest, Decrypt
 import jwt, { JwtPayload } from 'jsonwebtoken'
 import { DateTime } from "luxon";
 
+const JWT_SECRET_KEY = defineSecret('JWT_SECRET_KEY');
+const JWT_ALGORITHM = defineSecret('JWT_ALGORITHM');
 
 export const helloWorld = onRequest((request, response) => {
   logger.info("Hello logs!", { structuredData: true });
   response.send("Hello from Firebase!");
 });
 
-export const registerEndpoint = onRequest(async (req, res) => {
-  try {
-    // Manejo de CORS preflight
-    if (req.method === 'OPTIONS') {
-      res.set({
-        'Access-Control-Allow-Origin': '*',
-        'Access-Control-Allow-Methods': 'POST, OPTIONS',
-        'Access-Control-Allow-Headers': 'Content-Type',
-      });
-      res.status(204).send('');
-      return;
-    }
+export const registerEndpoint = onRequest(
+  { secrets: [JWT_SECRET_KEY, JWT_ALGORITHM] },
+  async (req, res) => {
+    try {
+      // Manejo de CORS preflight
+      if (req.method === 'OPTIONS') {
+        res.set({
+          'Access-Control-Allow-Origin': '*',
+          'Access-Control-Allow-Methods': 'POST, OPTIONS',
+          'Access-Control-Allow-Headers': 'Content-Type',
+        });
+        res.status(204).send('');
+        return;
+      }
 
-    if (req.method !== 'POST') {
-      res.status(405).json({
+      if (req.method !== 'POST') {
+        res.status(405).json({
+          status: 'error',
+          message: 'Método no permitido.',
+        });
+        return;
+      }
+
+      const contentType = req.headers['content-type'] || '';
+      if (!contentType.includes('application/json')) {
+        res.status(400).json({
+          status: 'error',
+          message: 'Content-Type debe ser application/json.',
+        });
+        return;
+      }
+      const body = req.body;
+      const { nombre, dni, id_key_pass } = body;
+
+      if (!nombre || !dni) {
+        res.status(400).json({
+          status: 'error',
+          message: "Campos 'nombre' y 'dni' son obligatorios.",
+        });
+        return;
+      }
+
+      const userData: UserData = {
+        id: dni,
+        nombre,
+        idKeypass: id_key_pass || '',
+      };
+
+      const responseData = await registerWorkers(userData);
+      if (responseData.status === 'success') {
+        res.status(200).json({
+          status: 'success',
+          message: 'Usuario registrado exitosamente',
+        });
+      } else {
+        res.status(400).json({
+          status: 'error',
+          message: responseData.message || 'Error al registrar usuario.',
+        });
+      }
+
+    } catch (err) {
+      logger.error('Error en registerEndpoint:', err);
+      res.status(500).json({
         status: 'error',
-        message: 'Método no permitido.',
-      });
-      return;
-    }
-
-    const contentType = req.headers['content-type'] || '';
-    if (!contentType.includes('application/json')) {
-      res.status(400).json({
-        status: 'error',
-        message: 'Content-Type debe ser application/json.',
-      });
-      return;
-    }
-    const body = req.body;
-    const { nombre, dni, id_key_pass } = body;
-
-    if (!nombre || !dni) {
-      res.status(400).json({
-        status: 'error',
-        message: "Campos 'nombre' y 'dni' son obligatorios.",
-      });
-      return;
-    }
-
-    const userData: UserData = {
-      id: dni,
-      nombre,
-      idKeypass: id_key_pass || '',
-    };
-
-    const responseData = await registerWorkers(userData);
-    console.log("responseData", responseData);
-    if (responseData.status === 'success') {
-      res.status(200).json({
-        status: 'success',
-        message: 'Usuario registrado exitosamente',
-      });
-    } else {
-      res.status(400).json({
-        status: 'error',
-        message: responseData.message || 'Error al registrar usuario.',
+        message: 'Hubo un error, contacte con el administrador.',
       });
     }
-
-  } catch (err) {
-    logger.error('Error en registerEndpoint:', err);
-    res.status(500).json({
-      status: 'error',
-      message: 'Hubo un error, contacte con el administrador.',
-    });
-  }
-});
+  });
 
 export const updateAssistanceEndpoint = onRequest(async (req, res) => {
   try {
@@ -113,7 +116,6 @@ export const updateAssistanceEndpoint = onRequest(async (req, res) => {
     const responseData = await updateAssistance(data);
 
     if (responseData.status === 'success') {
-      console.log('Registro exitoso:', responseData.message);
       res.status(200).json({
         status: 'success',
         message: `Asistencia actualizada: ${data.evento} a las ${data.hora}`,
@@ -228,9 +230,9 @@ export const encryptData = onRequest(async (req, res) => {
       exp: expTime, // exp en segundos UNIX
     };
 
-    const a: string = JWT_SECRET_KEY;
-    const b: jwt.Algorithm = JWT_ALGORITHM as jwt.Algorithm;
-
+    const a: string = JWT_SECRET_KEY.value();
+    const b: any = JWT_ALGORITHM.value();
+    console.log(a);
     const token = jwt.sign(payload, a, { algorithm: b });
 
     res.set('Access-Control-Allow-Origin', '*');
@@ -248,152 +250,155 @@ export const encryptData = onRequest(async (req, res) => {
   }
 });
 
-export const decryptData = onRequest(async (req, res) => {
-  try {
-    // Manejo de preflight CORS
-    if (req.method === 'OPTIONS') {
-      res.set({
-        'Access-Control-Allow-Origin': '*',
-        'Access-Control-Allow-Methods': 'POST, OPTIONS',
-        'Access-Control-Allow-Headers': 'Content-Type',
-      });
-      res.status(204).send('');
-      return;
-    }
+export const decryptData = onRequest(
+  { secrets: [JWT_SECRET_KEY, JWT_ALGORITHM] },
+  async (req, res) => {
+    try {
+      // Manejo de preflight CORS
+      if (req.method === 'OPTIONS') {
+        res.set({
+          'Access-Control-Allow-Origin': '*',
+          'Access-Control-Allow-Methods': 'POST, OPTIONS',
+          'Access-Control-Allow-Headers': 'Content-Type',
+        });
+        res.status(204).send('');
+        return;
+      }
 
-    if (req.method !== 'POST') {
-      res.status(405).json({
-        status: 'error',
-        message: 'Método no permitido.',
-      });
-      return;
-    }
+      if (req.method !== 'POST') {
+        res.status(405).json({
+          status: 'error',
+          message: 'Método no permitido.',
+        });
+        return;
+      }
 
-    const data: DecryptDataRequest = req.body;
-    const token = data.token;
+      const data: DecryptDataRequest = req.body;
+      const token = data.token;
 
-    if (!token) {
+      if (!token) {
+        res.status(400).json({
+          status: 'error',
+          message: 'Token es requerido.',
+        });
+        return;
+      }
+
+      const a: string = JWT_SECRET_KEY.value();
+      const b: any = JWT_ALGORITHM.value();
+
+      try {
+        // Decodificar token JWT
+        const decoded = jwt.verify(token, a, {
+          algorithms: [b],
+        }) as JwtPayload;
+
+        console.log('Token decodificado:', decoded);
+
+        if ('exp' in decoded) {
+          delete decoded.exp;
+        }
+
+        res.set('Access-Control-Allow-Origin', '*');
+        res.status(200).json({
+          status: 'success',
+          content: decoded,
+        });
+
+      } catch (err: any) {
+        console.error('Error al decodificar token:', err);
+
+        res.set('Access-Control-Allow-Origin', '*');
+
+        if (err.name === 'TokenExpiredError') {
+          res.status(401).json({
+            status: 'error',
+            content: { message: 'El token ha expirado.' },
+          });
+        } else if (err.name === 'JsonWebTokenError') {
+          res.status(401).json({
+            status: 'error',
+            content: { message: 'El token es inválido.' },
+          });
+        } else {
+          res.status(400).json({
+            status: 'error',
+            content: { message: `Error al procesar el token: ${err.message}` },
+          });
+        }
+      }
+
+    } catch (e: any) {
+      console.error('Error inesperado:', e);
+      res.set('Access-Control-Allow-Origin', '*');
       res.status(400).json({
         status: 'error',
-        message: 'Token es requerido.',
+        content: { message: `Hubo un error ${e.message}` },
+      });
+    }
+  });
+
+export const auth = onRequest(
+  { secrets: [JWT_SECRET_KEY, JWT_ALGORITHM] },
+  (req, res) => {
+    const authorization = req.headers.authorization;
+
+    if (!authorization) {
+      res.status(401).json({
+        status: 'error',
+        detail: 'Falta el header de autorización',
       });
       return;
     }
 
-    const a: string = JWT_SECRET_KEY;
-    const b: jwt.Algorithm = JWT_ALGORITHM as jwt.Algorithm;
+    let token = '';
+    try {
+      const [scheme, extractedToken] = authorization.split(' ');
+
+      if (scheme.toLowerCase() !== 'bearer') {
+        throw new Error('Esquema inválido');
+      }
+
+      token = extractedToken;
+    } catch {
+      res.status(401).json({
+        status: 'error',
+        detail: 'Formato de autorización incorrecto',
+      });
+      return;
+    }
+
+    const a: string = JWT_SECRET_KEY.value();
+    const b: any = JWT_ALGORITHM.value();
 
     try {
-      // Decodificar token JWT
       const decoded = jwt.verify(token, a, {
         algorithms: [b],
       }) as JwtPayload;
 
-      console.log('Token decodificado:', decoded);
-
-      if ('exp' in decoded) {
-        delete decoded.exp;
-      }
-
       res.set('Access-Control-Allow-Origin', '*');
       res.status(200).json({
-        status: 'success',
+        message: 'Token válido',
         content: decoded,
       });
-
     } catch (err: any) {
-      console.error('Error al decodificar token:', err);
-
       res.set('Access-Control-Allow-Origin', '*');
 
       if (err.name === 'TokenExpiredError') {
         res.status(401).json({
           status: 'error',
-          content: { message: 'El token ha expirado.' },
+          detail: 'Token expirado',
         });
       } else if (err.name === 'JsonWebTokenError') {
         res.status(401).json({
           status: 'error',
-          content: { message: 'El token es inválido.' },
+          detail: 'Token inválido',
         });
       } else {
-        res.status(400).json({
+        res.status(401).json({
           status: 'error',
-          content: { message: `Error al procesar el token: ${err.message}` },
+          detail: 'Error al verificar el token',
         });
       }
     }
-
-  } catch (e: any) {
-    console.error('Error inesperado:', e);
-    res.set('Access-Control-Allow-Origin', '*');
-    res.status(400).json({
-      status: 'error',
-      content: { message: `Hubo un error ${e.message}` },
-    });
-  }
-});
-
-export const auth = onRequest((req, res) => {
-  const authorization = req.headers.authorization;
-
-  if (!authorization) {
-    res.status(401).json({
-      status: 'error',
-      detail: 'Falta el header de autorización',
-    });
-    return;
-  }
-
-  let token = '';
-  try {
-    const [scheme, extractedToken] = authorization.split(' ');
-
-    if (scheme.toLowerCase() !== 'bearer') {
-      throw new Error('Esquema inválido');
-    }
-
-    token = extractedToken;
-  } catch {
-    res.status(401).json({
-      status: 'error',
-      detail: 'Formato de autorización incorrecto',
-    });
-    return;
-  }
-
-  const a: string = JWT_SECRET_KEY;
-  console.log(a);
-  const b: jwt.Algorithm = JWT_ALGORITHM as jwt.Algorithm;
-
-  try {
-    const decoded = jwt.verify(token, a, {
-      algorithms: [b],
-    }) as JwtPayload;
-
-    res.set('Access-Control-Allow-Origin', '*');
-    res.status(200).json({
-      message: 'Token válido',
-      content: decoded,
-    });
-  } catch (err: any) {
-    res.set('Access-Control-Allow-Origin', '*');
-
-    if (err.name === 'TokenExpiredError') {
-      res.status(401).json({
-        status: 'error',
-        detail: 'Token expirado',
-      });
-    } else if (err.name === 'JsonWebTokenError') {
-      res.status(401).json({
-        status: 'error',
-        detail: 'Token inválido',
-      });
-    } else {
-      res.status(401).json({
-        status: 'error',
-        detail: 'Error al verificar el token',
-      });
-    }
-  }
-});
+  });
