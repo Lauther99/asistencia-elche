@@ -1,5 +1,3 @@
 [build]
   functions = "src/functions"
-  publish = "ignore_frontend"
-  command = "echo 'Skipping frontend build'"
   node_bundler = "esbuild"
