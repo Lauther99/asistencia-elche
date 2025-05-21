@@ -4,3 +4,5 @@ frontend_
 lib
 
 dist
+# Local Netlify folder
+.netlify
