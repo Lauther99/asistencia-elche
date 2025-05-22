@@ -1,19 +1,28 @@
 import { Handler } from "@netlify/functions";
 import { UserData } from "../types"
 import { registerWorkers } from "../google_services/scripts"
+import { ALLOWED_ORIGINS } from "../settings"
 
 
 export const handler: Handler = async (event, context) => {
+  const requestOrigin = event.headers.origin || "";
+  const isAllowedOrigin = ALLOWED_ORIGINS.includes(requestOrigin);
+  const headers = {
+    "Access-Control-Allow-Origin": isAllowedOrigin ? requestOrigin : "",
+    "Access-Control-Allow-Methods": "POST, OPTIONS",
+    "Access-Control-Allow-Headers": "Content-Type",
+  } as Record<string, string>;
+
+  const headers_ = {
+    "Access-Control-Allow-Origin": isAllowedOrigin ? requestOrigin : "",
+  } as Record<string, string>;
+
   try {
     // Manejo de CORS preflight
     if (event.httpMethod === "OPTIONS") {
       return {
         statusCode: 204,
-        headers: {
-          "Access-Control-Allow-Origin": "*",
-          "Access-Control-Allow-Methods": "POST, OPTIONS",
-          "Access-Control-Allow-Headers": "Content-Type",
-        } as Record<string, string>,
+        headers: headers,
         body: "",
       };
     }
@@ -21,7 +30,7 @@ export const handler: Handler = async (event, context) => {
     if (event.httpMethod !== "POST") {
       return {
         statusCode: 405,
-        headers: { "Access-Control-Allow-Origin": "*" },
+        headers: headers_,
         body: JSON.stringify({
           status: "error",
           message: "Método no permitido.",
@@ -33,7 +42,7 @@ export const handler: Handler = async (event, context) => {
     if (!contentType.includes("application/json")) {
       return {
         statusCode: 400,
-        headers: { "Access-Control-Allow-Origin": "*" },
+        headers: headers_,
         body: JSON.stringify({
           status: "error",
           message: "Content-Type debe ser application/json.",
@@ -44,7 +53,7 @@ export const handler: Handler = async (event, context) => {
     if (!event.body) {
       return {
         statusCode: 400,
-        headers: { "Access-Control-Allow-Origin": "*" },
+        headers: headers_,
         body: JSON.stringify({
           status: "error",
           message: "Body no puede estar vacío.",
@@ -60,7 +69,7 @@ export const handler: Handler = async (event, context) => {
     if (!nombre || !dni) {
       return {
         statusCode: 400,
-        headers: { "Access-Control-Allow-Origin": "*" },
+        headers: headers_,
         body: JSON.stringify({
           status: "error",
           message: "Campos nombre y dni son obligatorios.",
@@ -80,7 +89,7 @@ export const handler: Handler = async (event, context) => {
     if (responseData.status === "success") {
       return {
         statusCode: 200,
-        headers: { "Access-Control-Allow-Origin": "*" },
+        headers: headers_,
         body: JSON.stringify({
           status: "success",
           message: "Usuario registrado exitosamente",
@@ -89,7 +98,7 @@ export const handler: Handler = async (event, context) => {
     } else {
       return {
         statusCode: 400,
-        headers: { "Access-Control-Allow-Origin": "*" },
+        headers: headers_,
         body: JSON.stringify({
           status: "error",
           message: responseData.message || "Error al registrar usuario.",
@@ -100,7 +109,7 @@ export const handler: Handler = async (event, context) => {
     console.error("Error en registerEndpoint:", err);
     return {
       statusCode: 500,
-      headers: { "Access-Control-Allow-Origin": "*" },
+      headers: headers_,
       body: JSON.stringify({
         status: "error",
         message: "Hubo un error, contacte con el administrador.",

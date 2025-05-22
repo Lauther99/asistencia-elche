@@ -1,15 +1,17 @@
 import type { Handler } from "@netlify/functions";
 import jwt, { JwtPayload } from "jsonwebtoken";
-import { JWT_ALGORITHM, JWT_SECRET_KEY } from "../settings"
+import { JWT_ALGORITHM, JWT_SECRET_KEY, ALLOWED_ORIGINS } from "../settings"
 import { DecryptDataRequest } from "../types"
 
-const headers = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Methods": "POST, OPTIONS",
-  "Access-Control-Allow-Headers": "Content-Type",
-} as Record<string, string>;
-
 const handler: Handler = async (event) => {
+  const requestOrigin = event.headers.origin || "";
+  const isAllowedOrigin = ALLOWED_ORIGINS.includes(requestOrigin);
+  const headers = {
+    "Access-Control-Allow-Origin": isAllowedOrigin ? requestOrigin : "",
+    "Access-Control-Allow-Methods": "POST, OPTIONS",
+    "Access-Control-Allow-Headers": "Content-Type",
+  } as Record<string, string>;
+
   try {
     if (event.httpMethod === "OPTIONS") {
       return {
@@ -79,8 +81,8 @@ const handler: Handler = async (event) => {
         err.name === "TokenExpiredError"
           ? "El token ha expirado."
           : err.name === "JsonWebTokenError"
-          ? "El token es inválido."
-          : `Error al procesar el token: ${err.message}`;
+            ? "El token es inválido."
+            : `Error al procesar el token: ${err.message}`;
 
       return {
         statusCode: 401,

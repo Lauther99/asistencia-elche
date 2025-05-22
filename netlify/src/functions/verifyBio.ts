@@ -1,18 +1,23 @@
 import type { Handler } from "@netlify/functions";
 import { VerifyBioRequest } from "../types"
 import { getUserData } from "../google_services/scripts"
+import { ALLOWED_ORIGINS } from "../settings"
 
 
 export const handler: Handler = async (event, context) => {
+  const requestOrigin = event.headers.origin || "";
+  const isAllowedOrigin = ALLOWED_ORIGINS.includes(requestOrigin);
+  const headers = {
+    "Access-Control-Allow-Origin": isAllowedOrigin ? requestOrigin : "",
+    "Access-Control-Allow-Methods": "POST, OPTIONS",
+    "Access-Control-Allow-Headers": "Content-Type",
+  } as Record<string, string>;
+
   try {
     if (event.httpMethod === "OPTIONS") {
       return {
         statusCode: 204,
-        headers: {
-          "Access-Control-Allow-Origin": "*",
-          "Access-Control-Allow-Methods": "POST, OPTIONS",
-          "Access-Control-Allow-Headers": "Content-Type",
-        } as Record<string, string>,
+        headers: headers,
         body: "",
       };
     }
@@ -20,11 +25,7 @@ export const handler: Handler = async (event, context) => {
     if (event.httpMethod !== "POST") {
       return {
         statusCode: 405,
-        headers: {
-          "Access-Control-Allow-Origin": "*",
-          "Access-Control-Allow-Methods": "POST, OPTIONS",
-          "Access-Control-Allow-Headers": "Content-Type",
-        } as Record<string, string>,
+        headers: headers,
         body: JSON.stringify({
           status: "error",
           message: "Método no permitido.",
@@ -35,11 +36,7 @@ export const handler: Handler = async (event, context) => {
     if (!event.body) {
       return {
         statusCode: 400,
-        headers: {
-          "Access-Control-Allow-Origin": "*",
-          "Access-Control-Allow-Methods": "POST, OPTIONS",
-          "Access-Control-Allow-Headers": "Content-Type",
-        } as Record<string, string>,
+        headers: headers,
         body: JSON.stringify({
           status: "error",
           message: "Body no puede estar vacío.",
@@ -61,21 +58,13 @@ export const handler: Handler = async (event, context) => {
       };
       return {
         statusCode: 200,
-        headers: {
-          "Access-Control-Allow-Origin": "*",
-          "Access-Control-Allow-Methods": "POST, OPTIONS",
-          "Access-Control-Allow-Headers": "Content-Type",
-        } as Record<string, string>,
+        headers: headers,
         body: JSON.stringify(content),
       };
     } else {
       return {
         statusCode: 400,
-        headers: {
-          "Access-Control-Allow-Origin": "*",
-          "Access-Control-Allow-Methods": "POST, OPTIONS",
-          "Access-Control-Allow-Headers": "Content-Type",
-        } as Record<string, string>,
+        headers: headers,
         body: JSON.stringify({
           status: "error",
           message: responseData.message || "Error al obtener los datos.",
@@ -86,11 +75,7 @@ export const handler: Handler = async (event, context) => {
     console.error("Error en verifyBio:", err);
     return {
       statusCode: 500,
-      headers: {
-        "Access-Control-Allow-Origin": "*",
-        "Access-Control-Allow-Methods": "POST, OPTIONS",
-        "Access-Control-Allow-Headers": "Content-Type",
-      } as Record<string, string>,
+      headers: headers,
       body: JSON.stringify({
         status: "error",
         message: "Hubo un error, contacte con el administrador.",

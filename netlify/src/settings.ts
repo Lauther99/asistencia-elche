@@ -11,5 +11,5 @@ const configMap: Record<string, string> = {
 
 export const JWT_SECRET_KEY = configMap.JWT_SECRET_KEY_;
 export const JWT_ALGORITHM = configMap.JWT_ALGORITHM_;
-export const ALLOWED_ORIGINS = configMap.ALLOWED_ORIGINS_;
+export const ALLOWED_ORIGINS = configMap.ALLOWED_ORIGINS_.split(",");
 export const GOOGLE_SCRIPTS_ENDPOINT = configMap.GOOGLE_SCRIPTS_ENDPOINT_;

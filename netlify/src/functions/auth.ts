@@ -1,17 +1,17 @@
 import type { Handler } from "@netlify/functions";
 import jwt, { JwtPayload } from "jsonwebtoken";
-
-const JWT_SECRET_KEY = process.env.JWT_SECRET_KEY!;
-const JWT_ALGORITHM = process.env.JWT_ALGORITHM!;
-
-const headers = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Methods": "POST, OPTIONS",
-  "Access-Control-Allow-Headers": "Content-Type, Authorization",
-} as Record<string, string>;
+import { JWT_SECRET_KEY, JWT_ALGORITHM, ALLOWED_ORIGINS } from "../settings"
 
 export const handler: Handler = async (event) => {
   const authHeader = event.headers.authorization;
+
+  const requestOrigin = event.headers.origin || "";
+  const isAllowedOrigin = ALLOWED_ORIGINS.includes(requestOrigin);
+  const headers = {
+    "Access-Control-Allow-Origin": isAllowedOrigin ? requestOrigin : "",
+    "Access-Control-Allow-Methods": "POST, OPTIONS",
+    "Access-Control-Allow-Headers": "Content-Type, Authorization",
+  } as Record<string, string>;
 
   if (!authHeader) {
     return {
