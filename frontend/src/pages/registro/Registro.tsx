@@ -316,7 +316,11 @@ const Registro: React.FC = () => {
     return (
         <div className='component-container'>
             <LoadingComponent flag={isLoading} />
-            <BlockedCamera flag={isCameraAble} />
+            {
+                false && (
+                    <BlockedCamera flag={isCameraAble} />
+                )
+            }
             <div className='registro'>
                 {false && cameraDisplayLayer()}
                 <form onSubmit={(e) => handleSubmit(e)} style={{
