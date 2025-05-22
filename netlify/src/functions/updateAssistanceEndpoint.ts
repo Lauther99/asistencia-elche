@@ -13,6 +13,18 @@ export const handler: Handler = async (event, context) => {
   } as Record<string, string>;
 
   try {
+    if (event.httpMethod === "OPTIONS") {
+      return {
+        statusCode: 200,
+        headers: {
+          "Access-Control-Allow-Origin": "*",
+          "Access-Control-Allow-Methods": "POST, OPTIONS",
+          "Access-Control-Allow-Headers": "Content-Type",
+        } as Record<string, string>,
+        body: "",
+      };
+    }
+    
     if (event.httpMethod !== "POST") {
       return {
         statusCode: 405,
