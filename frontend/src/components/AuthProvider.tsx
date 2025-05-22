@@ -2,7 +2,7 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 
 
 const base = import.meta.env.VITE_BASE_BACKEND_URL
-const encrypt_token_url = base + "/v1/encrypt-data"
+const encrypt_token_url = base + "/encryptData"
 
 interface AuthContextType {
   isAuthenticated: boolean;
@@ -16,7 +16,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
 
   useEffect(() => {
-    // Verificar si hay un token en el sessionStorage al cargar la aplicación
     const token = sessionStorage.getItem('authToken');
     if (token) {
       setIsAuthenticated(true);
