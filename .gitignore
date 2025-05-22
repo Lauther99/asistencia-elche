@@ -1,4 +1,7 @@
 database
 frontend_
-
+.env
 node_modules
+.netlify
+lib
+dist
