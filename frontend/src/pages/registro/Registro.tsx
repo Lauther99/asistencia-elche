@@ -13,7 +13,7 @@ import BlockedCamera from '../../components/BlockedCamera';
 
 const web_base_url = import.meta.env.VITE_BASE_FRONTEND_URL
 const base = import.meta.env.VITE_BASE_BACKEND_URL
-const register_url = base + "/v1/register"
+const register_url = base + "/registerEndpoint"
 
 const Registro: React.FC = () => {
     const navigate = useNavigate();
@@ -65,7 +65,7 @@ const Registro: React.FC = () => {
 
         checkCameraPermission();
     }, []);
-    
+
     useEffect(() => {
         if (isFormCompleted) {
             if (isPhotoCaptured || isFingerPrintCaptured) {
@@ -169,50 +169,75 @@ const Registro: React.FC = () => {
         e.preventDefault();
         setIsLoading(true)
         // Aquí puedes hacer lo que necesites con los datos del formulario
-        const formData = new FormData();
-        formData.append('dni', dni);
-        formData.append('nombre', nombre);
 
         if (photo) {
+            const formData = new FormData();
+            formData.append('dni', dni);
             formData.append('nombre', nombre);
+
             const response = await fetch(photo);
             const blob = await response.blob();
             formData.append('foto', blob, 'photo.jpg');
-        }
 
-        if (fingerprintID) {
-            formData.append('id_key_pass', fingerprintID);
-        }
-
-        try {
-            const res = await fetch(register_url, {
-                method: 'POST',
-                body: formData,
-            });
-            const data = await res.json();
-
-            if (!res.ok) {
-                alert(data.message);
-                resetValues();
-                return
+            if (fingerprintID) {
+                formData.append('id_key_pass', fingerprintID);
             }
-            alert(data.message);
-            navigate('/');
 
-        } catch (error) {
-            console.error('Error:', error);
-            alert('Hubo un error al registrar el usuario. Intenta nuevamente.');
-        } finally {
-            setIsLoading(false)
-        }
+            try {
+                const res = await fetch(register_url, {
+                    method: 'POST',
+                    body: formData,
+                });
+                const data = await res.json();
+
+                if (!res.ok) {
+                    alert(data.message);
+                    resetValues();
+                    return
+                }
+                alert(data.message);
+                navigate('/');
+
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Hubo un error al registrar el usuario. Intenta nuevamente.');
+            } finally {
+                setIsLoading(false)
+            }
+        } else {
+            try {
+                const res = await fetch(register_url, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        "nombre": nombre,
+                        "dni": dni,
+                        "id_key_pass": fingerprintID
+                    }),
+                });
+                const data = await res.json();
+
+                if (!res.ok) {
+                    alert(data.message);
+                    resetValues();
+                    return
+                }
+                alert(data.message);
+                navigate('/');
+
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Hubo un error al registrar el usuario. Intenta nuevamente.');
+            } finally {
+                setIsLoading(false)
+            };
+        };
     };
 
-
-    return (
-        <div className='component-container'>
-            <LoadingComponent flag={isLoading} />
-            <BlockedCamera flag={isCameraAble} />
-            <div className='registro'>
+    const cameraDisplayLayer = () => {
+        return (
                 <div className={`registro-webcam-container ${!isCameraOpen ? "hidden" : ""}`} onClick={closeCamera}>
                     <div style={{
                         width: "100%",
@@ -284,6 +309,20 @@ const Registro: React.FC = () => {
                         </button>
                     </div>
                 </div>
+            )
+    }
+
+
+    return (
+        <div className='component-container'>
+            <LoadingComponent flag={isLoading} />
+            {
+                false && (
+                    <BlockedCamera flag={isCameraAble} />
+                )
+            }
+            <div className='registro'>
+                {false && cameraDisplayLayer()}
                 <form onSubmit={(e) => handleSubmit(e)} style={{
                     width: "100%",
                     display: "flex",
@@ -333,12 +372,25 @@ const Registro: React.FC = () => {
                             top: "0",
                             left: "0",
                         }} className={`${isFormCompleted ? "hidden" : ""}`} />
-                        <button type='button' disabled={isFingerPrintCaptured} className={`register-btn ${isFingerPrintCaptured ? "green" : ""}`} onClick={captureFingerPrint}>
+                        <button
+                            type='button'
+                            disabled={isFingerPrintCaptured}
+                            className={`register-btn ${isFingerPrintCaptured ? "green" : ""}`}
+                            onClick={captureFingerPrint}
+                        >
                             <img src={FingerSVG} alt="Fingerprint Icon"></img>
                         </button>
-                        <button type='button' className={`register-btn ${isPhotoCaptured ? "green" : ""}`} onClick={displayCamera}>
-                            <img src={FaceSVG} alt=""></img>
-                        </button>
+                        {
+                            false && (
+                                <button
+                                    type='button'
+                                    className={`register-btn ${isPhotoCaptured ? "green" : ""} hidden`}
+                                    onClick={displayCamera}
+                                >
+                                    <img src={FaceSVG} alt=""></img>
+                                </button>
+                            )
+                        }
                     </div>
                     <div style={{
                         width: "100%",

@@ -1,8 +1,7 @@
 database
 frontend_
-
-lib
-
-dist
-# Local Netlify folder
+.env
+node_modules
 .netlify
+lib
+dist

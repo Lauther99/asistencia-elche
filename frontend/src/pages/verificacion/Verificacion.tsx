@@ -6,7 +6,7 @@ import LoadingComponent from '../../components/LoadingComponent';
 import { useAuth } from '../../components/AuthProvider';
 
 const base = import.meta.env.VITE_BASE_BACKEND_URL
-const verify_url = base + "/v1/verify-bio"
+const verify_url = base + "/verifyBio"
 
 
 
@@ -77,9 +77,13 @@ const Verificacion: React.FC = () => {
                 <button onClick={fingerPrintVerification}>
                     <img src={FingerSVG} alt="Fingerprint Icon"></img>
                 </button>
-                <button onClick={() => navigate('/verificacion/f')}>
-                    <img src={FaceSVG} alt="Face ID Icon"></img>
-                </button>
+                {
+                    false && (
+                        <button onClick={() => navigate('/verificacion/f')}>
+                            <img src={FaceSVG} alt="Face ID Icon"></img>
+                        </button>
+                    )
+                }
             </div>
         </div>
     );

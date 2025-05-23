@@ -5,14 +5,17 @@ import { TZDate } from "@date-fns/tz";
 import { format, addSeconds } from "date-fns";
 import { es } from "date-fns/locale";
 import LoadingComponent from '../../components/LoadingComponent';
-import { destroySession } from '../../functions/sessionManager';
+// import { destroySession } from '../../functions/sessionManager';
+import { useAuth } from '../../components/AuthProvider';
 
 
 const base = import.meta.env.VITE_BASE_BACKEND_URL
-const update_assistance_url = base + "/v1/update-assistance"
-const decrypt_token_url = base + "/v1/decrypt-data"
+const update_assistance_url = base + "/updateAssistanceEndpoint"
+const decrypt_token_url = base + "/decryptData"
 
 const Asistencia: React.FC = () => {
+    const { logout } = useAuth();
+    
     const date = new Date();
     const now = new TZDate(date, "America/Lima");
     const navigate = useNavigate();
@@ -236,8 +239,9 @@ const Asistencia: React.FC = () => {
                     Fin Descanso
                 </button>
                 <button className="check-assistance-btn red" onClick={() => {
-                    destroySession("authToken")
-                    navigate(`/`)
+                    // destroySession("authToken")
+                    // navigate(`/`)
+                    logout()
                 }}>Salir</button>
             </div>
         </div>
