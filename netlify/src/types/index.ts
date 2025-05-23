@@ -2,6 +2,7 @@ export interface UserData {
   id: string;
   nombre: string;
   idKeypass: string;
+  password: string;
 }
 
 export interface AssistanceData {

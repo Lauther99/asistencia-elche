@@ -1,6 +1,23 @@
 import {GOOGLE_SCRIPTS_ENDPOINT} from "../settings";
 import {ResponseData} from "../types";
 
+export async function login(userData: Record<string, any>) {
+  const url = `${GOOGLE_SCRIPTS_ENDPOINT}?accion=login`;
+
+  const headers = {
+    "Content-Type": "application/json",
+  };
+
+  const response = await fetch(url, {
+    method: "POST",
+    headers,
+    body: JSON.stringify(userData),
+  });
+
+  const responseData = await response.json();
+
+  return responseData;
+}
 
 export async function registerWorkers(userData: Record<string, any>) {
   const url = GOOGLE_SCRIPTS_ENDPOINT;

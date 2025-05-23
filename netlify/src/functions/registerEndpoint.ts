@@ -1,8 +1,9 @@
 import { Handler } from "@netlify/functions";
 import { UserData } from "../types"
 import { registerWorkers } from "../google_services/scripts"
-import { ALLOWED_ORIGINS } from "../settings"
-
+import { ALLOWED_ORIGINS, JWT_ALGORITHM, JWT_SECRET_KEY } from "../settings"
+import jwt from "jsonwebtoken";
+import bcrypt from 'bcrypt';
 
 export const handler: Handler = async (event, context) => {
   const requestOrigin = event.headers.origin || "";
@@ -65,22 +66,36 @@ export const handler: Handler = async (event, context) => {
     const nombre = body.nombre;
     const dni = body.dni;
     const idKeypass = body.id_key_pass;
-
-    if (!nombre || !dni) {
+    const password = body.password;
+    
+    if (!nombre || !dni || !password) {
       return {
         statusCode: 400,
         headers: headers_,
         body: JSON.stringify({
           status: "error",
-          message: "Campos nombre y dni son obligatorios.",
+          message: "Campos nombre, dni y password son obligatorios.",
         }),
       };
     }
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    const payload = {
+      dni,
+      nombre,
+      hashedPassword,
+    };
+
+    const secretKey = JWT_SECRET_KEY;
+    const algorithm = JWT_ALGORITHM as jwt.Algorithm;
+    const hash = jwt.sign(payload, secretKey, { algorithm });
 
     const userData: UserData = {
       id: dni,
       nombre,
       idKeypass: idKeypass || "",
+      password: hash
     };
 
     // Suponemos que registerWorkers es una función async que devuelve un objeto con 'status' y 'message'
