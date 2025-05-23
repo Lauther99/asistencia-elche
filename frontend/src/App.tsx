@@ -61,7 +61,6 @@ const App: React.FC = () => {
             }
           />
 
-          {/* <Route path="/asistencia" element={<Asistencia />} /> */}
         </Routes>
       </Router>
     </AuthProvider>
@@ -69,6 +68,3 @@ const App: React.FC = () => {
 };
 
 export default App;
-
-
-//! verificar un doble registro (quizas cuando ya este registrado (es decir en la asistencia) colocar un boton para agregar el embedding de la cara)

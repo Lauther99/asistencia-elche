@@ -1,14 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import FaceSVG from '../../assets/faceid.svg';
-import FingerSVG from '../../assets/fingerprint.svg';
 import LoadingComponent from '../../components/LoadingComponent';
 import { useAuth } from '../../components/AuthProvider';
 import SendSVG from '../../assets/send.svg';
 
 
 const Verificacion: React.FC = () => {
-    const navigate = useNavigate();
     const [isLoading, setIsLoading] = useState(false);
     const [errorMessage, setErrorMessage] = useState<null | string>(null)
     const { login } = useAuth();
@@ -63,12 +59,14 @@ const Verificacion: React.FC = () => {
             <LoadingComponent flag={isLoading} />
             <form onSubmit={(e) => handleSubmit(e)} style={{
                 width: "100%",
+                height: "500px",
+                maxWidth: "300px",
                 display: "flex",
                 flexDirection: "column",
                 gap: "12px",
-                alignItems: "center"
+                alignItems: "center",
+                margin: "auto"
             }}>
-
                 <div className='form-item'>
                     <label htmlFor="dni">DNI</label>
                     <input
@@ -119,7 +117,7 @@ const Verificacion: React.FC = () => {
                     </button>
                 </div>
             </form>
-            {
+            {/* {
                 false && (
                     <div className='verificacion'>
                         <button onClick={handleSubmit}>
@@ -131,7 +129,7 @@ const Verificacion: React.FC = () => {
 
                     </div>
                 )
-            }
+            } */}
         </div>
     );
 };
