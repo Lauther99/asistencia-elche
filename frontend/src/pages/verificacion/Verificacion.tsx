@@ -1,68 +1,55 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import FaceSVG from '../../assets/faceid.svg';
 import FingerSVG from '../../assets/fingerprint.svg';
 import LoadingComponent from '../../components/LoadingComponent';
 import { useAuth } from '../../components/AuthProvider';
-
-const base = import.meta.env.VITE_BASE_BACKEND_URL
-const verify_url = base + "/verifyBio"
-
+import SendSVG from '../../assets/send.svg';
 
 
 const Verificacion: React.FC = () => {
     const navigate = useNavigate();
     const [isLoading, setIsLoading] = useState(false);
-    const [errorMessage, setErrorMessage] = useState("")
-    const [isError, setIsError] = useState(false)
+    const [errorMessage, setErrorMessage] = useState<null | string>(null)
     const { login } = useAuth();
-    console.log(errorMessage);
-    console.log(isError);
 
-    const fingerPrintVerification = async () => {
+    const [dni, setDni] = useState('');
+    const [password, setPassword] = useState('');
+    const [isSubmitable, setIsSubmitable] = useState(false);
+    const [showPassword, setShowPassword] = useState(false);
+
+
+    useEffect(() => {
+        if (dni.length === 8 && password) {
+            setIsSubmitable(true);
+        } else {
+            setIsSubmitable(false);
+        }
+    }, [dni, password]);
+
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+
         try {
             setIsLoading(true)
-            const challenge = crypto.getRandomValues(new Uint8Array(32));
-            const publicKey: PublicKeyCredentialRequestOptions = {
-                challenge,
-                timeout: 60000,
-                userVerification: 'required'
-            };
-            const assertion = await navigator.credentials.get({ publicKey }) as PublicKeyCredential;
-            const idKeypass = assertion.id
 
-            const response = await fetch(verify_url, {
-                method: "POST",
-                headers: {
-                    'Content-Type': 'application/json', // Indicamos que el contenido es JSON
-                },
-                body: JSON.stringify({ "idKeypass": idKeypass }),
-            });
-
-            if (!response.ok) {
-                const data = await response.json();
-                throw new Error(data.message);
-            }
-            const data = await response.json();
-            if (data.status === "success") {
-                const dni = data?.content?.dni
-                const nombre = data?.content?.nombre
-                await login(nombre, dni);
+            if (isSubmitable) {
+                const dni_ = dni
+                const password_ = password
+                await login(dni_, password_);
                 window.location.reload();
             } else {
-                alert(data.message)
+                alert("Complete el dni y contraseña")
             }
 
         } catch (error) {
             if (error instanceof DOMException && error.name === "NotAllowedError") {
                 console.warn("🚫 Autenticación cancelada por el usuario o no permitida.");
-                setIsError(true)
                 setErrorMessage("🚫 Autenticación cancelada por el usuario o no permitida.")
             }
             if (error instanceof Error && error.name === "Error") {
                 console.warn(error);
                 alert(error.message)
-                setIsError(true)
                 setErrorMessage(error.message)
             }
         } finally {
@@ -73,18 +60,77 @@ const Verificacion: React.FC = () => {
     return (
         <div className='component-container'>
             <LoadingComponent flag={isLoading} />
-            <div className='verificacion'>
-                <button onClick={fingerPrintVerification}>
-                    <img src={FingerSVG} alt="Fingerprint Icon"></img>
-                </button>
-                {
-                    false && (
+            <form onSubmit={(e) => handleSubmit(e)} style={{
+                width: "100%",
+                display: "flex",
+                flexDirection: "column",
+                gap: "12px",
+                alignItems: "center"
+            }}>
+
+                <div className='form-item'>
+                    <label htmlFor="dni">DNI</label>
+                    <input
+                        type="text"
+                        minLength={8}
+                        maxLength={8}
+                        pattern="[0-9]*"
+                        inputMode="numeric"
+                        id="dni"
+                        value={dni}
+                        onChange={(e) => setDni(e.target.value)}
+                        required
+                    />
+                </div>
+                <div className='form-item'>
+                    <label htmlFor="password">Contraseña</label>
+                    <input
+                        type={showPassword ? 'text' : 'password'}
+                        id="password"
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                        required
+                        style={{ paddingRight: '2rem' }}
+                    />
+                    <button
+                        type="button"
+                        onClick={() => setShowPassword(!showPassword)}
+                    >
+                        {showPassword ? '🙈' : '👁️'}
+                    </button>
+                </div>
+                <div style={{
+                    width: "100%",
+                    marginTop: "1rem",
+                    position: "relative",
+                }} >
+                    <div style={{
+                        position: "absolute",
+                        backgroundColor: "#1a1a1a66",
+                        width: "100%",
+                        height: "100%",
+                        borderRadius: "8px",
+                        top: "0",
+                        left: "0",
+                    }} className={`${isSubmitable ? "hidden" : ""}`} />
+                    <button type="submit" className={`register-btn submit ${isSubmitable ? "green" : ""}`}>
+                        <img src={SendSVG} alt=""></img>
+                    </button>
+                </div>
+            </form>
+            {
+                false && (
+                    <div className='verificacion'>
+                        <button onClick={handleSubmit}>
+                            <img src={FingerSVG} alt="Fingerprint Icon"></img>
+                        </button>
                         <button onClick={() => navigate('/verificacion/f')}>
                             <img src={FaceSVG} alt="Face ID Icon"></img>
                         </button>
-                    )
-                }
-            </div>
+
+                    </div>
+                )
+            }
         </div>
     );
 };

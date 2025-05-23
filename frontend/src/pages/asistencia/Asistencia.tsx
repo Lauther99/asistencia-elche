@@ -1,11 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { useLocation } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
 import { TZDate } from "@date-fns/tz";
 import { format, addSeconds } from "date-fns";
 import { es } from "date-fns/locale";
 import LoadingComponent from '../../components/LoadingComponent';
-// import { destroySession } from '../../functions/sessionManager';
 import { useAuth } from '../../components/AuthProvider';
 
 
@@ -19,9 +17,8 @@ const Asistencia: React.FC = () => {
     const date = new Date();
     const now = new TZDate(date, "America/Lima");
     const navigate = useNavigate();
-    const location = useLocation();
-
-    const params = new URLSearchParams(location.search);
+    // const location = useLocation();
+    // const params = new URLSearchParams(location.search);
 
     const [payload, setPayload] = useState<any>(null);
     const [nombre, setNombre] = useState("");
@@ -72,7 +69,7 @@ const Asistencia: React.FC = () => {
             }
         }
 
-        const jwt = params.get('token');
+        const jwt = sessionStorage.getItem('authToken');
         if (jwt) {
             verifyToken(jwt)
         } else {

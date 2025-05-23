@@ -34,6 +34,9 @@ const Registro: React.FC = () => {
     const [photo, setPhoto] = useState<string | null>(null);
     const [dni, setDni] = useState('');
     const [nombre, setNombre] = useState('');
+    const [password, setPassword] = useState('');
+
+    const [showPassword, setShowPassword] = useState(false);
 
     const [isCameraAble, setIsCameraAble] = useState("");
 
@@ -66,25 +69,27 @@ const Registro: React.FC = () => {
         checkCameraPermission();
     }, []);
 
-    useEffect(() => {
-        if (isFormCompleted) {
-            if (isPhotoCaptured || isFingerPrintCaptured) {
-                setIsSubmitable(true);
-            } else {
-                setIsSubmitable(false);
-            }
-        } else {
-            setIsSubmitable(false);
-        }
-    }, [isPhotoCaptured, isFingerPrintCaptured, isFormCompleted]);
+    // useEffect(() => {
+    //     if (isFormCompleted) {
+    //         if (isPhotoCaptured || isFingerPrintCaptured) {
+    //             setIsSubmitable(true);
+    //         } else {
+    //             setIsSubmitable(false);
+    //         }
+    //     } else {
+    //         setIsSubmitable(false);
+    //     }
+    // }, [isPhotoCaptured, isFingerPrintCaptured, isFormCompleted]);
 
     useEffect(() => {
-        if (dni.length >= 8 && nombre.length > 0) {
+        if (dni.length >= 8 && nombre.length > 0 && password) {
             setIsFormCompleted(true);
+            setIsSubmitable(true);
         } else {
             setIsFormCompleted(false);
+            setIsSubmitable(false);
         }
-    }, [dni, nombre]);
+    }, [dni, nombre, password]);
 
     useEffect(() => {
         if (fingerprintID) {
@@ -214,7 +219,7 @@ const Registro: React.FC = () => {
                     body: JSON.stringify({
                         "nombre": nombre,
                         "dni": dni,
-                        "id_key_pass": fingerprintID
+                        "password": password,
                     }),
                 });
                 const data = await res.json();
@@ -238,78 +243,78 @@ const Registro: React.FC = () => {
 
     const cameraDisplayLayer = () => {
         return (
-                <div className={`registro-webcam-container ${!isCameraOpen ? "hidden" : ""}`} onClick={closeCamera}>
-                    <div style={{
-                        width: "100%",
-                        maxWidth: "350px",
-                        margin: "0 auto",
-                    }}>
-                        <Webcam
-                            audio={false}
-                            ref={webcamRef}
-                            screenshotFormat="image/jpeg"
-                            width="100%"
-                            style={{
-                                borderRadius: "50%",
-                                objectFit: "cover",
-                                aspectRatio: "3 / 4",
-                                transform: "scaleX(-1)"
+            <div className={`registro-webcam-container ${!isCameraOpen ? "hidden" : ""}`} onClick={closeCamera}>
+                <div style={{
+                    width: "100%",
+                    maxWidth: "350px",
+                    margin: "0 auto",
+                }}>
+                    <Webcam
+                        audio={false}
+                        ref={webcamRef}
+                        screenshotFormat="image/jpeg"
+                        width="100%"
+                        style={{
+                            borderRadius: "50%",
+                            objectFit: "cover",
+                            aspectRatio: "3 / 4",
+                            transform: "scaleX(-1)"
 
-                            }}
-                            videoConstraints={{
-                                facingMode: 'user',
-                                width: 640,
-                                height: 480,
-                            }}
-                            className={`${isPhotoCaptured ? "hidden" : ""}`}
-                            onClick={(e) => e.stopPropagation()}
-                        />
-                        <div className={`${!isPhotoCaptured ? "hidden" : ""}`}>
-                            <img src={photo!} alt="Foto Capturada" style={{
-                                width: "100%",
-                                objectFit: "cover",
-                                borderRadius: "50%",
-                                aspectRatio: "3 / 4",
-                                transform: "scaleX(-1)"
-                            }} />
-                        </div>
-                    </div>
-                    <div style={{
-                        display: "flex",
-                        flexDirection: "column",
-                        height: "120px",
-                        alignItems: "center",
-                        justifyContent: "flex-start",
-                        gap: "10px",
-                    }}>
-                        <button type='button'
-                            disabled={isPhotoCaptured}
-                            className={`${isPhotoCaptured ? "hidden" : ""}`}
-                            onClick={(e) => {
-                                e.stopPropagation();
-                                capturePhoto();
-                            }}>
-                            <img src={CameraSVG} alt=""></img>
-                        </button>
-                        <button type='button'
-                            className={`${!isPhotoCaptured ? "hidden" : ""}`}
-                            onClick={(e) => {
-                                e.stopPropagation();
-                                closeCamera();
-                            }}>
-                            <img src={CheckSVG} alt=""></img>
-                        </button>
-                        <button type='button'
-                            className={`${!isPhotoCaptured ? "hidden" : ""}`}
-                            onClick={(e) => {
-                                e.stopPropagation();
-                                clearPhoto();
-                            }}>
-                            <img src={ClearSVG} alt=""></img>
-                        </button>
+                        }}
+                        videoConstraints={{
+                            facingMode: 'user',
+                            width: 640,
+                            height: 480,
+                        }}
+                        className={`${isPhotoCaptured ? "hidden" : ""}`}
+                        onClick={(e) => e.stopPropagation()}
+                    />
+                    <div className={`${!isPhotoCaptured ? "hidden" : ""}`}>
+                        <img src={photo!} alt="Foto Capturada" style={{
+                            width: "100%",
+                            objectFit: "cover",
+                            borderRadius: "50%",
+                            aspectRatio: "3 / 4",
+                            transform: "scaleX(-1)"
+                        }} />
                     </div>
                 </div>
-            )
+                <div style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    height: "120px",
+                    alignItems: "center",
+                    justifyContent: "flex-start",
+                    gap: "10px",
+                }}>
+                    <button type='button'
+                        disabled={isPhotoCaptured}
+                        className={`${isPhotoCaptured ? "hidden" : ""}`}
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            capturePhoto();
+                        }}>
+                        <img src={CameraSVG} alt=""></img>
+                    </button>
+                    <button type='button'
+                        className={`${!isPhotoCaptured ? "hidden" : ""}`}
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            closeCamera();
+                        }}>
+                        <img src={CheckSVG} alt=""></img>
+                    </button>
+                    <button type='button'
+                        className={`${!isPhotoCaptured ? "hidden" : ""}`}
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            clearPhoto();
+                        }}>
+                        <img src={ClearSVG} alt=""></img>
+                    </button>
+                </div>
+            </div>
+        )
     }
 
 
@@ -330,6 +335,18 @@ const Registro: React.FC = () => {
                     gap: "12px",
                     alignItems: "center"
                 }}>
+
+                    <div className='form-item'>
+                        <label htmlFor="nombre">Nombre</label>
+                        <input
+                            type="text"
+                            id="nombre"
+                            value={nombre}
+                            onChange={(e) => setNombre(e.target.value)}
+                            required
+                            style={{}}
+                        />
+                    </div>
                     <div className='form-item'>
                         <label htmlFor="dni">DNI</label>
                         <input
@@ -345,53 +362,62 @@ const Registro: React.FC = () => {
                         />
                     </div>
                     <div className='form-item'>
-                        <label htmlFor="nombre">Nombre</label>
+                        <label htmlFor="password">Contraseña</label>
                         <input
-                            type="text"
-                            id="nombre"
-                            value={nombre}
-                            onChange={(e) => setNombre(e.target.value)}
+                            type={showPassword ? 'text' : 'password'}
+                            id="password"
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
                             required
-                            style={{}}
+                            style={{ paddingRight: '2rem'}}
                         />
-                    </div>
-                    <div style={{
-                        width: "100%",
-                        display: "flex",
-                        flexDirection: "row",
-                        justifyContent: "space-between",
-                        marginTop: "1rem",
-                        position: "relative",
-                    }}>
-                        <div style={{
-                            position: "absolute",
-                            backgroundColor: "#1a1a1a66",
-                            width: "100%",
-                            height: "100%",
-                            borderRadius: "8px",
-                            top: "0",
-                            left: "0",
-                        }} className={`${isFormCompleted ? "hidden" : ""}`} />
                         <button
-                            type='button'
-                            disabled={isFingerPrintCaptured}
-                            className={`register-btn ${isFingerPrintCaptured ? "green" : ""}`}
-                            onClick={captureFingerPrint}
+                            type="button"
+                            onClick={() => setShowPassword(!showPassword)}
                         >
-                            <img src={FingerSVG} alt="Fingerprint Icon"></img>
+                            {showPassword ? '🙈' : '👁️'}
                         </button>
-                        {
-                            false && (
-                                <button
-                                    type='button'
-                                    className={`register-btn ${isPhotoCaptured ? "green" : ""} hidden`}
-                                    onClick={displayCamera}
-                                >
-                                    <img src={FaceSVG} alt=""></img>
-                                </button>
-                            )
-                        }
                     </div>
+                    {false && (
+                        <div
+                            style={{
+                                width: "100%",
+                                display: "flex",
+                                flexDirection: "row",
+                                justifyContent: "space-between",
+                                marginTop: "1rem",
+                                position: "relative",
+                            }}
+                        >
+                            <div
+                                style={{
+                                    position: "absolute",
+                                    backgroundColor: "#1a1a1a66",
+                                    width: "100%",
+                                    height: "100%",
+                                    borderRadius: "8px",
+                                    top: "0",
+                                    left: "0",
+                                }}
+                                className={`${isFormCompleted ? "hidden" : ""}`}
+                            />
+                            <button
+                                type='button'
+                                disabled={isFingerPrintCaptured}
+                                className={`register-btn ${isFingerPrintCaptured ? "green" : ""}`}
+                                onClick={captureFingerPrint}
+                            >
+                                <img src={FingerSVG} alt="Fingerprint Icon"></img>
+                            </button>
+                            <button
+                                type='button'
+                                className={`register-btn ${isPhotoCaptured ? "green" : ""}`}
+                                onClick={displayCamera}
+                            >
+                                <img src={FaceSVG} alt=""></img>
+                            </button>
+                        </div>
+                    )}
                     <div style={{
                         width: "100%",
                         marginTop: "1rem",

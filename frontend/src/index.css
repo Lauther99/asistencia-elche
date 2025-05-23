@@ -63,6 +63,7 @@ button:focus-visible {
 }
 
 .form-item{
+  position: relative;
   width: 100%;
   display: flex;
   flex-direction: column;
@@ -70,6 +71,22 @@ button:focus-visible {
 
 .form-item input{
   padding: 10px;
+}
+
+.form-item button{
+  padding: 5px;
+  position: absolute;
+  right: 0;
+  top: 65%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.form-item button:focus{
+  outline: none;
+  box-shadow: none;
 }
 
 .retake-photo-btn{

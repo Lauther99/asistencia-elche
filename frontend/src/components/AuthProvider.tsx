@@ -2,11 +2,11 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 
 
 const base = import.meta.env.VITE_BASE_BACKEND_URL
-const encrypt_token_url = base + "/encryptData"
+const login_url = base + "/login"
 
 interface AuthContextType {
   isAuthenticated: boolean;
-  login: (nombre: string, dni: string) => void;
+  login: (dni: string, password: string) => void;
   logout: () => void;
 }
 
@@ -22,15 +22,15 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   }, []);
 
-  const login = async (nombre: string, dni: string) => {
+  const login = async (dni: string, password: string) => {
     try {
-      const response = await fetch(encrypt_token_url, {
+      const response = await fetch(login_url, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-            "nombre": nombre,
+            "password": password,
             "dni": dni.toString(),
         }),
       });

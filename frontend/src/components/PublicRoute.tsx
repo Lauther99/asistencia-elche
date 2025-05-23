@@ -11,7 +11,7 @@ const PublicRoute: React.FC<PublicRouteProps> = ({ children}) => {
   if (isAuthenticated) {
     const storedData = sessionStorage.getItem('authToken');
     if (storedData){
-      return <Navigate to={`/asistencia?token=${storedData}`} replace />;
+      return <Navigate to={`/asistencia`} replace />;
     }
   }
 
