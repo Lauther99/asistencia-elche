@@ -51,6 +51,7 @@ const Verificacion: React.FC = () => {
                 console.warn(error);
                 alert(error.message)
                 setErrorMessage(error.message)
+                console.log(errorMessage);
             }
         } finally {
             setIsLoading(false)
