@@ -4,9 +4,14 @@ import LoadingComponent from '../../components/LoadingComponent';
 import { useAuth } from '../../components/AuthProvider';
 import SendSVG from '../../assets/send.svg';
 import { workers } from '../../functions/getWorkers';
+import { useNavigate } from 'react-router-dom';
 
+const not_admins = workers.map((w) => {
+    return w.dni
+})
 
 const Verificacion: React.FC = () => {
+    const navigate = useNavigate();
     const { id } = useParams<{ id: string }>();
     const [isLoading, setIsLoading] = useState(false);
     const [errorMessage, setErrorMessage] = useState<null | string>(null)
@@ -21,7 +26,9 @@ const Verificacion: React.FC = () => {
     useEffect(() => {
         if (id) {
             const numericId = Number(id) - 1;
-            setDni(workers[numericId].dni);
+            if (numericId) {
+                setDni(workers[numericId].dni);
+            }
         }
     }, [id]);
 
@@ -35,13 +42,20 @@ const Verificacion: React.FC = () => {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+        
+        if(id?.toLocaleLowerCase() === "admin" && not_admins.includes(dni)) {
+            alert("No es administrador")
+            navigate(`/`)
+            return
+        }
+        
+        const dni_ = `D${dni}`
+        const password_ = password
 
         try {
             setIsLoading(true)
 
             if (isSubmitable) {
-                const dni_ = `D${dni}`
-                const password_ = password
                 await login(dni_, password_);
                 window.location.reload();
             } else {
@@ -77,20 +91,24 @@ const Verificacion: React.FC = () => {
                 alignItems: "center",
                 margin: "auto"
             }}>
-                {/* <div className='form-item'>
-                    <label htmlFor="dni">DNI</label>
-                    <input
-                        type="text"
-                        minLength={8}
-                        maxLength={8}
-                        pattern="[0-9]*"
-                        inputMode="numeric"
-                        id="dni"
-                        value={dni}
-                        onChange={(e) => setDni(e.target.value)}
-                        required
-                    />
-                </div> */}
+                {
+                    id?.toLocaleLowerCase() === "admin" && (
+                        <div className='form-item'>
+                            <label htmlFor="dni">DNI</label>
+                            <input
+                                type="text"
+                                minLength={8}
+                                maxLength={8}
+                                pattern="[0-9]*"
+                                inputMode="numeric"
+                                id="dni"
+                                value={dni}
+                                onChange={(e) => setDni(e.target.value)}
+                                required
+                            />
+                        </div>
+                    )
+                }
                 <div className='form-item'>
                     <label htmlFor="password">Contraseña</label>
                     <input
