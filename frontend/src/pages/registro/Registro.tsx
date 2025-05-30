@@ -181,7 +181,7 @@ const Registro: React.FC = () => {
                 },
                 body: JSON.stringify({
                     "nombre": nombre,
-                    "dni": dni,
+                    "dni": `D${dni}`,
                     "password": password,
                 }),
             });
