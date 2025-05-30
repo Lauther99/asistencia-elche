@@ -35,7 +35,7 @@ const App: React.FC = () => {
           />
 
           <Route
-            path="/verificacion"
+            path="/verificacion/:id"
             element={
               <PublicRoute>
                 <Verificacion />

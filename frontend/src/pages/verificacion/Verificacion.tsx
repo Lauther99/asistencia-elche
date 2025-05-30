@@ -1,22 +1,32 @@
 import React, { useState, useEffect } from 'react';
+import { useParams } from "react-router-dom";
 import LoadingComponent from '../../components/LoadingComponent';
 import { useAuth } from '../../components/AuthProvider';
 import SendSVG from '../../assets/send.svg';
+import { workers } from '../../functions/getWorkers';
 
 
 const Verificacion: React.FC = () => {
+    const { id } = useParams<{ id: string }>();
     const [isLoading, setIsLoading] = useState(false);
     const [errorMessage, setErrorMessage] = useState<null | string>(null)
     const { login } = useAuth();
 
-    const [dni, setDni] = useState('');
+    const [dni, setDni] = useState<string>('');
     const [password, setPassword] = useState('');
     const [isSubmitable, setIsSubmitable] = useState(false);
     const [showPassword, setShowPassword] = useState(false);
 
 
     useEffect(() => {
-        if (dni.length === 8 && password) {
+        if (id) {
+            const numericId = Number(id) - 1;
+            setDni(workers[numericId].dni);
+        }
+    }, [id]);
+
+    useEffect(() => {
+        if (password) {
             setIsSubmitable(true);
         } else {
             setIsSubmitable(false);
@@ -30,7 +40,7 @@ const Verificacion: React.FC = () => {
             setIsLoading(true)
 
             if (isSubmitable) {
-                const dni_ = dni
+                const dni_ = `D${dni}`
                 const password_ = password
                 await login(dni_, password_);
                 window.location.reload();
@@ -67,7 +77,7 @@ const Verificacion: React.FC = () => {
                 alignItems: "center",
                 margin: "auto"
             }}>
-                <div className='form-item'>
+                {/* <div className='form-item'>
                     <label htmlFor="dni">DNI</label>
                     <input
                         type="text"
@@ -80,7 +90,7 @@ const Verificacion: React.FC = () => {
                         onChange={(e) => setDni(e.target.value)}
                         required
                     />
-                </div>
+                </div> */}
                 <div className='form-item'>
                     <label htmlFor="password">Contraseña</label>
                     <input
