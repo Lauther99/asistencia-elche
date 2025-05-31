@@ -17,7 +17,7 @@ const Verificacion: React.FC = () => {
     const [errorMessage, setErrorMessage] = useState<null | string>(null)
     const { login } = useAuth();
 
-    const [dni, setDni] = useState<string>('');
+    const [dniNumber, setDniNumber] = useState<string>('');
     const [password, setPassword] = useState('');
     const [isSubmitable, setIsSubmitable] = useState(false);
     const [showPassword, setShowPassword] = useState(false);
@@ -26,8 +26,8 @@ const Verificacion: React.FC = () => {
     useEffect(() => {
         if (id) {
             const numericId = Number(id) - 1;
-            if (numericId) {
-                setDni(workers[numericId].dni);
+            if (numericId >= 0) {
+                setDniNumber(workers[numericId].dni);
             }
         }
     }, [id]);
@@ -38,18 +38,18 @@ const Verificacion: React.FC = () => {
         } else {
             setIsSubmitable(false);
         }
-    }, [dni, password]);
+    }, [password]);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        
-        if(id?.toLocaleLowerCase() === "admin" && not_admins.includes(dni)) {
+
+        if (id?.toLocaleLowerCase() === "admin" && not_admins.includes(dniNumber)) {
             alert("No es administrador")
             navigate(`/`)
             return
         }
-        
-        const dni_ = `D${dni}`
+
+        const dni_ = `D${dniNumber}`
         const password_ = password
 
         try {
@@ -102,8 +102,8 @@ const Verificacion: React.FC = () => {
                                 pattern="[0-9]*"
                                 inputMode="numeric"
                                 id="dni"
-                                value={dni}
-                                onChange={(e) => setDni(e.target.value)}
+                                value={dniNumber}
+                                onChange={(e) => setDniNumber(e.target.value)}
                                 required
                             />
                         </div>
@@ -113,6 +113,9 @@ const Verificacion: React.FC = () => {
                     <label htmlFor="password">Contraseña</label>
                     <input
                         type={showPassword ? 'text' : 'password'}
+                        minLength={8}
+                        maxLength={8}
+                        inputMode="numeric"
                         id="password"
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
