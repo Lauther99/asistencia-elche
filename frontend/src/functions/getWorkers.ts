@@ -6,5 +6,5 @@ export const workers: { [key: string]: string }[] = [
   { index: "005", nombre: "STACY LIZAMA", dni: "60843575" },
   { index: "006", nombre: "JOSE VALLADARES", dni: "25729326" },
   { index: "007", nombre: "BRENDY CHERO", dni: "43857335" },
-  { index: "008", nombre: "YOVANY", dni: "03898576" }
+  { index: "008", nombre: "YOVANY RIVAS", dni: "03898576" }
 ];
