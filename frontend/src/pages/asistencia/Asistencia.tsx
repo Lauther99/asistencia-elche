@@ -215,25 +215,25 @@ const Asistencia: React.FC = () => {
                     className="check-assistance-btn"
                     style={{ display: isVisible ? 'block' : 'none' }}
                     onClick={() => updateAssistance("entrada")}>
-                    Entrada
-                </button>
-                <button
-                    className="check-assistance-btn"
-                    // style={{ display: isVisible ? 'block' : 'none' }}
-                    onClick={() => updateAssistance("salida")}>
-                    Salida
+                    Entrada 1
                 </button>
                 <button
                     className="check-assistance-btn"
                     style={{ display: isVisible ? 'block' : 'none' }}
                     onClick={() => updateAssistance("descanso_inicio")}>
-                    Inicio Descanso
+                    Salida 1
                 </button>
                 <button
                     className="check-assistance-btn"
                     style={{ display: isVisible ? 'block' : 'none' }}
                     onClick={() => updateAssistance("descanso_fin")}>
-                    Fin Descanso
+                    Entrada 2
+                </button>
+                <button
+                    className="check-assistance-btn"
+                    // style={{ display: isVisible ? 'block' : 'none' }}
+                    onClick={() => updateAssistance("salida")}>
+                    Salida 2
                 </button>
                 <button className="check-assistance-btn red" onClick={() => {
                     // destroySession("authToken")
