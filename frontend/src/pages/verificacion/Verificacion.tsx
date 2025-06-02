@@ -113,7 +113,6 @@ const Verificacion: React.FC = () => {
                     <label htmlFor="password">Contraseña</label>
                     <input
                         type={showPassword ? 'text' : 'password'}
-                        minLength={8}
                         maxLength={8}
                         inputMode="numeric"
                         id="password"
