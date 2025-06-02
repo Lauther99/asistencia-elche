@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { workers } from '../functions/getWorkers';
-
+import logo from '../../public/logo.jpg'
 
 const Inicio: React.FC = () => {
   const navigate = useNavigate();
@@ -34,7 +34,7 @@ const Inicio: React.FC = () => {
           alignItems: "center", // Centra horizontalmente
           margin: "auto",
           width: "100%",
-          maxWidth: "400px",
+          maxWidth: "350px",
           height: "300px", // Ajusta según necesidad
           position: "absolute",
           top: "50%",
@@ -49,7 +49,13 @@ const Inicio: React.FC = () => {
           gap: "12px"
         }}
       >
-        <h1>Hola</h1>
+        <img
+          src={logo} alt="Logo restaurante Donde el Che"
+          style={{
+            "width": "200px",
+            "padding": "16px"
+          }}
+        />
         <div style={{
           display: "flex",
           flexDirection: "column",
