@@ -212,13 +212,13 @@ const Asistencia: React.FC = () => {
                 }}
             >
                 <button
-                    className="check-assistance-btn"
+                    className="check-assistance-btn turn-1"
                     style={{ display: isVisible ? 'block' : 'none' }}
                     onClick={() => updateAssistance("entrada")}>
                     Entrada 1
                 </button>
                 <button
-                    className="check-assistance-btn"
+                    className="check-assistance-btn turn-1"
                     style={{ display: isVisible ? 'block' : 'none' }}
                     onClick={() => updateAssistance("descanso_inicio")}>
                     Salida 1

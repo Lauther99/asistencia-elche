@@ -109,15 +109,25 @@ button:focus-visible {
   border: 0px;
 }
 
+.turn-1{
+  background-color: rgb(255, 255, 45);
+  color: black;
+}
+
+.check-assistance-btn:hover{
+  background-color: #1a1a1a66;
+}
+
+.turn-1:hover {
+  background-color: rgba(255, 255, 45, 0.5);
+  
+}
+
 .check-assistance-btn{
   border: 0;
   padding: 4px;
   height: 60px;
   transition: all linear .2s;
-}
-
-.check-assistance-btn:hover{
-  background-color: #1a1a1a66;
 }
 
 .component-container{
