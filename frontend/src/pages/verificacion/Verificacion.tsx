@@ -6,9 +6,6 @@ import SendSVG from '../../assets/send.svg';
 import { workers } from '../../functions/getWorkers';
 import { useNavigate } from 'react-router-dom';
 
-const not_admins = workers.map((w) => {
-    return w.dni
-})
 
 const Verificacion: React.FC = () => {
     const navigate = useNavigate();
@@ -43,10 +40,14 @@ const Verificacion: React.FC = () => {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
 
-        if (id?.toLocaleLowerCase() === "admin" && not_admins.includes(dniNumber)) {
-            alert("No es administrador")
-            navigate(`/`)
-            return
+        if (id?.toLowerCase() === "admin") {
+            const worker = workers.find(w => w.dni === dniNumber);
+
+            if (worker && worker.role !== "admin") {
+                alert("No es administrador");
+                navigate(`/`);
+                return;
+            }
         }
 
         const dni_ = `D${dniNumber}`

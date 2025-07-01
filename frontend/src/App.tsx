@@ -1,7 +1,7 @@
 import React from "react";
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Inicio from "./pages/Inicio";  // Componente de inicio
-// import Registro from "./pages/registro/Registro";  // Componente de registro
+import Registro from "./pages/registro/Registro";  // Componente de registro
 import Verificacion from "./pages/verificacion/Verificacion";  // Componente de verificación
 import Asistencia from "./pages/asistencia/Asistencia";  // Componente de verificación
 // import VerificacionFace from "./pages/verificacion/VerificacionFace";
@@ -25,14 +25,14 @@ const App: React.FC = () => {
             }
           />
 
-          {/* <Route
+          <Route
             path="/registro"
             element={
               <PublicRoute>
                 <Registro />
               </PublicRoute>
             }
-          /> */}
+          />
 
           <Route
             path="/verificacion/:id"
