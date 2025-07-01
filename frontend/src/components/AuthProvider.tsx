@@ -6,7 +6,8 @@ const login_url = base + "/login"
 
 interface AuthContextType {
   isAuthenticated: boolean;
-  login: (dni: string, password: string) => void;
+  role: string | null,
+  login: (dni: string, password: string, role: string) => void;
   logout: () => void;
 }
 
@@ -14,15 +15,18 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
+  const [role, setRole] = useState<string | null>("worker");
 
   useEffect(() => {
     const token = sessionStorage.getItem('authToken');
+    const r: string | null = sessionStorage.getItem('role');
     if (token) {
       setIsAuthenticated(true);
+      setRole(r);
     }
   }, []);
 
-  const login = async (dni: string, password: string) => {
+  const login = async (dni: string, password: string, role: string) => {
     try {
       const response = await fetch(login_url, {
         method: 'POST',
@@ -32,6 +36,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         body: JSON.stringify({
             "password": password,
             "dni": dni.toString(),
+            "role": role
         }),
       });
 
@@ -39,6 +44,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
       if (response.ok && data.token) {
         sessionStorage.setItem('authToken', data.token);
+        sessionStorage.setItem('role', role);
+        setRole(role);
         setIsAuthenticated(true);
       } else {
         alert('Login fallido: ' + data.message);
@@ -52,11 +59,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const logout = () => {
     sessionStorage.removeItem('authToken');
+    sessionStorage.removeItem('role');
     setIsAuthenticated(false);
   };
 
   return (
-    <AuthContext.Provider value={{ isAuthenticated, login, logout }}>
+    <AuthContext.Provider value={{ isAuthenticated, role, login, logout }}>
       {children}
     </AuthContext.Provider>
   );

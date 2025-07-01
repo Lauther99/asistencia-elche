@@ -4,30 +4,20 @@ import LoadingComponent from '../../components/LoadingComponent';
 import { useAuth } from '../../components/AuthProvider';
 import SendSVG from '../../assets/send.svg';
 import { workers } from '../../functions/getWorkers';
-import { useNavigate } from 'react-router-dom';
+// import { useNavigate } from 'react-router-dom';
 
 
 const Verificacion: React.FC = () => {
-    const navigate = useNavigate();
+    // const navigate = useNavigate();
     const { id } = useParams<{ id: string }>();
     const [isLoading, setIsLoading] = useState(false);
     const [errorMessage, setErrorMessage] = useState<null | string>(null)
     const { login } = useAuth();
 
-    const [dniNumber, setDniNumber] = useState<string>('');
     const [password, setPassword] = useState('');
     const [isSubmitable, setIsSubmitable] = useState(false);
     const [showPassword, setShowPassword] = useState(false);
 
-
-    useEffect(() => {
-        if (id) {
-            const numericId = Number(id) - 1;
-            if (numericId >= 0) {
-                setDniNumber(workers[numericId].dni);
-            }
-        }
-    }, [id]);
 
     useEffect(() => {
         if (password) {
@@ -40,24 +30,37 @@ const Verificacion: React.FC = () => {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
 
-        if (id?.toLowerCase() === "admin") {
-            const worker = workers.find(w => w.dni === dniNumber);
-
-            if (worker && worker.role !== "admin") {
-                alert("No es administrador");
-                navigate(`/`);
-                return;
-            }
-        }
-
-        const dni_ = `D${dniNumber}`
+        const worker = workers.find(w => w.index === id);
+        const dni_ = `D${worker?.dni}`
         const password_ = password
+        if (worker?.role === "admin") {
+            setIsLoading(true)
+            if (password_+password_ === worker?.dni) {
+                try {
+                    await login(dni_, password_, worker?.role || "admin");
+                } catch (error) {
+                    if (error instanceof DOMException && error.name === "NotAllowedError") {
+                        console.warn("🚫 Autenticación cancelada por el usuario o no permitida.");
+                        setErrorMessage("🚫 Autenticación cancelada por el usuario o no permitida.")
+                    }
+                    if (error instanceof Error && error.name === "Error") {
+                        console.warn(error);
+                        alert(error.message)
+                        setErrorMessage(error.message)
+                        console.log(errorMessage);
+                    }
+                } finally {
+                    setIsLoading(false)
+                }
+            }
+            setIsLoading(false)
+            return
+        }
 
         try {
             setIsLoading(true)
-
             if (isSubmitable) {
-                await login(dni_, password_);
+                await login(dni_, password_, worker?.role || "worker");
                 window.location.reload();
             } else {
                 alert("Complete el dni y contraseña")
@@ -92,7 +95,7 @@ const Verificacion: React.FC = () => {
                 alignItems: "center",
                 margin: "auto"
             }}>
-                {
+                {/* {
                     id?.toLocaleLowerCase() === "admin" && (
                         <div className='form-item'>
                             <label htmlFor="dni">DNI</label>
@@ -109,7 +112,7 @@ const Verificacion: React.FC = () => {
                             />
                         </div>
                     )
-                }
+                } */}
                 <div className='form-item'>
                     <label htmlFor="password">Contraseña</label>
                     <input
