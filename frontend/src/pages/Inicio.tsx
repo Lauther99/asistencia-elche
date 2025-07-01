@@ -8,10 +8,6 @@ const Inicio: React.FC = () => {
   const [selectedIndex, setSelectedIndex] = useState("");
   const selectedWorker = workers.find((w) => w.index === selectedIndex);
 
-  // const handleRegister = () => {
-  //   navigate('/registro');
-  // };
-
   const handleVerify = (id?: string) => {
     if (id) {
       navigate(`/verificacion/${id}`);
@@ -61,7 +57,6 @@ const Inicio: React.FC = () => {
           flexDirection: "column",
           gap: "12px"
         }}>
-          {/* <button onClick={handleRegister} style={{ width: "300px" }}>Registrar</button> */}
           <select
             value={selectedIndex}
             onChange={(e) => setSelectedIndex(e.target.value)}

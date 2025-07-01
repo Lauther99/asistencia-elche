@@ -66,6 +66,7 @@ export const handler: Handler = async (event, context) => {
         const body = JSON.parse(event.body);
         const dni = body.dni;
         const password = body.password;
+        const role = body.role;
 
         if (!password || !dni) {
             return {
@@ -100,7 +101,7 @@ export const handler: Handler = async (event, context) => {
             if (isValid) {
                 const expTime = DateTime.now()
                     .setZone("America/Lima")
-                    .plus({ minutes: 10 })
+                    .plus({ minutes: role === "worker"? 5 : 30 })
                     .toSeconds();
 
                 const payload = {

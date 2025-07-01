@@ -1,13 +1,14 @@
 import React from "react";
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Inicio from "./pages/Inicio";  // Componente de inicio
-// import Registro from "./pages/registro/Registro";  // Componente de registro
 import Verificacion from "./pages/verificacion/Verificacion";  // Componente de verificación
 import Asistencia from "./pages/asistencia/Asistencia";  // Componente de verificación
 // import VerificacionFace from "./pages/verificacion/VerificacionFace";
 import ProtectedRoute from "./components/ProtectedRoute";
 import PublicRoute from "./components/PublicRoute";
 import { AuthProvider } from './components/AuthProvider';
+import Admin from "./pages/admin/admin";
+// import Registro from "./pages/registro/Registro";  // Componente de registro
 
 
 const App: React.FC = () => {
@@ -57,6 +58,14 @@ const App: React.FC = () => {
             element={
               <ProtectedRoute>
                 <Asistencia />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin"
+            element={
+              <ProtectedRoute>
+                <Admin />
               </ProtectedRoute>
             }
           />
