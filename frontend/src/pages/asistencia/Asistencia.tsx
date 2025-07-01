@@ -158,15 +158,7 @@ const Asistencia: React.FC = () => {
 
 
     return (
-        <div style={{
-            margin: "auto",
-            maxWidth: "300px",
-            padding: "24px",
-            display: "flex",
-            flexDirection: "column",
-            gap: "2rem",
-            alignItems: "center",
-        }}>
+        <div className='container'>
             <LoadingComponent flag={isLoading} />
             <div style={{
                 margin: "auto",
@@ -177,24 +169,26 @@ const Asistencia: React.FC = () => {
                 gap: "4px"
             }}>
                 <h1 style={{
-                    fontSize: "32px",
+                    fontSize: "1.8rem",
                     textAlign: "center",
                     margin: "0",
-                    lineHeight: "1.5"
+                    lineHeight: "1.5",
+                    color: "#f1c40f"
                 }}>
                     {nombre}
                 </h1>
                 <h2 style={{
                     fontSize: "4rem",
                     textAlign: "center",
-                    margin: "0",
-                    fontWeight: "400"
+                    margin: "0.2rem 0",
+                    fontWeight: "bold"
                 }}>
                     {format(currentDate, 'pp', { locale: es })}
                 </h2>
                 <h4 style={{
                     fontSize: "1.5rem",
                     textAlign: "center",
+                    color: "bdc3c7",
                     margin: "0",
                     fontWeight: "400"
                 }}>
@@ -212,32 +206,29 @@ const Asistencia: React.FC = () => {
                 }}
             >
                 <button
-                    className="check-assistance-btn turn-1"
+                    className="check-assistance-btn entrada"
                     style={{ display: isVisible ? 'block' : 'none' }}
                     onClick={() => updateAssistance("entrada")}>
                     Entrada 1
                 </button>
                 <button
-                    className="check-assistance-btn turn-1"
+                    className="check-assistance-btn salida"
                     style={{ display: isVisible ? 'block' : 'none' }}
                     onClick={() => updateAssistance("descanso_inicio")}>
                     Salida 1
                 </button>
                 <button
-                    className="check-assistance-btn"
+                    className="check-assistance-btn entrada2"
                     style={{ display: isVisible ? 'block' : 'none' }}
                     onClick={() => updateAssistance("descanso_fin")}>
                     Entrada 2
                 </button>
                 <button
-                    className="check-assistance-btn"
-                    // style={{ display: isVisible ? 'block' : 'none' }}
+                    className="check-assistance-btn salida2"
                     onClick={() => updateAssistance("salida")}>
                     Salida 2
                 </button>
-                <button className="check-assistance-btn red" onClick={() => {
-                    // destroySession("authToken")
-                    // navigate(`/`)
+                <button className="check-assistance-btn salir" onClick={() => {
                     logout()
                 }}>Salir</button>
             </div>
