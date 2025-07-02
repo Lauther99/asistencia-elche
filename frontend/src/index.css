@@ -625,6 +625,10 @@ p{
   color: white;
 }
 
+.day-header{
+  border: none;
+}
+
 @keyframes toast-slide-in {
   0% {
     opacity: 0;
@@ -707,7 +711,6 @@ p{
   }
 
   .popup-descanso-container, .notification-popup{
-    width: 80%;
     min-height: 200px;
     padding: 1rem;
   }
@@ -735,6 +738,17 @@ p{
 
   .toast{
     width: 80%;
+  }
+
+  
+
+  .calendar-day {
+    padding: 0;
+    width: 30px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
 
 }

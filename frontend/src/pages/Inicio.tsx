@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { workers } from '../functions/getWorkers';
-import logo from '../../public/logo.jpg'
+import logo from '../assets/logo.jpg'
 
 const Inicio: React.FC = () => {
   const navigate = useNavigate();
