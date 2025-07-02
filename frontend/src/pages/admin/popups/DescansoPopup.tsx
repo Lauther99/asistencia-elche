@@ -23,7 +23,10 @@ const DescansoPopup: React.FC<Props> = ({ workers, onClose }) => {
     const selectedWorker = workers.find(w => w.dni === selectedWorkerId);
     const [selectedDay, setSelectedDay] = React.useState<Date | null>(null);
     const [showToast, setShowToast] = React.useState(false);
-    const [toastProperties, setToastProperties] = React.useState<ToastProperties>({ message: "", toastClassname: "" });
+    const [toastProperties, setToastProperties] = React.useState<ToastProperties>({
+        message: "",
+        toastClassname: ""
+    });
 
 
     const onDateSelect = (day: Date) => {

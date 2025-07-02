@@ -168,21 +168,25 @@ body {
   color: white;
 }
 
-.check-assistance-btn:hover{
+.check-assistance-btn:hover, .admin-options-btn:hover{
   opacity: 0.5;
 }
 
-.check-assistance-btn{
+.check-assistance-btn, .admin-options-btn{
   border: 0;
   height: 60px;
   transition: all linear .2s;
   font-weight: bold;
 }
 
-.check-assistance-btn:disabled {
+.check-assistance-btn:disabled, .admin-options-btn:disabled{
   background-color: gray;
   opacity: 0.5;
   cursor: not-allowed;
+}
+
+.admin-options-btn{
+  width: 100%;
 }
 
 .component-container{
@@ -412,7 +416,7 @@ body {
 .popup-overlay {
   position: fixed;
   top: 0;
-  right: 0;
+  left: 0;
   width: 100vw;
   height: 100vh;
   background-color: #242424b1;
@@ -469,6 +473,7 @@ body {
   font-size: 1.5rem;
   font-weight: 600;
   color: #1f2937;
+  text-align: center;
 }
 
 .mb-4 {
@@ -675,4 +680,61 @@ p{
   button {
     background-color: #f9f9f9;
   }
+}
+
+@media (width <= 700px){
+  body{
+    background: #1e272e;
+  }
+
+  .container {
+    width: 95%;
+    height: 100vh;
+    max-width: none;
+    min-height: none;
+    border-radius: 0;
+    padding: 0;
+    box-shadow: none;
+  }
+
+  .popup-overlay {
+    width: 100vw;
+  }
+
+  .notification-textarea {
+    min-height: 150px;
+    font-size: 1.25rem;
+  }
+
+  .popup-descanso-container, .notification-popup{
+    width: 80%;
+    min-height: 200px;
+    padding: 1rem;
+  }
+
+
+
+  .loading-container{
+    width: 100%;
+  }
+
+  .admin-options-btn{
+    width: 90%;
+  }
+
+  .title-text {
+    font-size: 1.25rem;
+    text-align: center;
+  }
+
+  .calendar-day {
+    padding: 0.6rem 0.5rem;
+    border-radius: 0.5rem;
+    font-size: 16px;
+  }
+
+  .toast{
+    width: 80%;
+  }
+
 }
