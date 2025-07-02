@@ -66,23 +66,17 @@ const Admin: React.FC = () => {
     }, [])
 
     return (
-        <div style={{ width: "80vw", maxWidth: "400px" }}>
+        <div className='component-container'>
             <LoadingComponent flag={isLoading} />
             <div
                 className='container'
-                style={{
-                    display: "grid",
-                    gridTemplateColumns: "1fr",
-                    gap: "12px",
-                    margin: "auto",
-                }}
             >
                 <h1 style={{ fontSize: "32px" }}>{adminData?.name}</h1>
-                <button className="check-assistance-btn entrada"
+                <button className="admin-options-btn entrada"
                     onClick={() => setAbrirPopupDescanso(true)}>
                     Asignar descansos
                 </button>
-                <button className="check-assistance-btn salir" onClick={() => {
+                <button className="admin-options-btn salir" onClick={() => {
                     logout()
                 }}>Salir</button>
 
