@@ -7,7 +7,7 @@ import Asistencia from "./pages/asistencia/Asistencia";  // Componente de verifi
 import ProtectedRoute from "./components/ProtectedRoute";
 import PublicRoute from "./components/PublicRoute";
 import { AuthProvider } from './components/AuthProvider';
-import Admin from "./pages/admin/admin";
+import Admin from "./pages/admin/Admin";
 // import Registro from "./pages/registro/Registro";  // Componente de registro
 
 

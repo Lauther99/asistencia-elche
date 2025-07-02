@@ -4,11 +4,11 @@ import LoadingComponent from '../../components/LoadingComponent';
 import { useAuth } from '../../components/AuthProvider';
 import SendSVG from '../../assets/send.svg';
 import { workers } from '../../functions/getWorkers';
-// import { useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 
 const Verificacion: React.FC = () => {
-    // const navigate = useNavigate();
+    const navigate = useNavigate();
     const { id } = useParams<{ id: string }>();
     const [isLoading, setIsLoading] = useState(false);
     const [errorMessage, setErrorMessage] = useState<null | string>(null)
@@ -38,6 +38,7 @@ const Verificacion: React.FC = () => {
             if (password_+password_ === worker?.dni) {
                 try {
                     await login(dni_, password_, worker?.role || "admin");
+                    navigate("/admin")
                 } catch (error) {
                     if (error instanceof DOMException && error.name === "NotAllowedError") {
                         console.warn("🚫 Autenticación cancelada por el usuario o no permitida.");
