@@ -110,7 +110,7 @@ const VerificacionFace: React.FC = () => {
             if (data.status === "success") {
                 const nombre = data.message.nombre
                 const dni = data.message.id
-                await login(nombre, dni);
+                await login(nombre, dni, "worker");
                 window.location.reload();
             } else {
                 alert(data.message)
