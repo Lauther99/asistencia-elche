@@ -129,3 +129,26 @@ export async function setKeypass(userData: Record<string, any>) {
   return res;
 }
 
+export async function updateDescansos(userData: Record<string, any>) {
+  const url = `${GOOGLE_SCRIPTS_ENDPOINT}?accion=descansos`;
+
+  const headers = {
+    "Content-Type": "application/json",
+  };
+
+  const response = await fetch(url, {
+    method: "POST",
+    headers,
+    body: JSON.stringify(userData),
+  });
+
+  const responseData = await response.json();
+
+  const res: ResponseData = {
+    status: responseData["status"],
+    message: responseData["message"],
+  };
+
+  return res;
+}
+
