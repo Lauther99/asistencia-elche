@@ -1,6 +1,5 @@
 import type { Handler } from "@netlify/functions";
-import { AssistanceData } from "../types"
-import { updateDescansos } from "../google_services/scripts"
+import { updateObservaciones } from "../google_services/scripts"
 import { ALLOWED_ORIGINS } from "../settings"
 
 export const handler: Handler = async (event, context) => {
@@ -49,8 +48,8 @@ export const handler: Handler = async (event, context) => {
 
         const data = JSON.parse(event.body);
 
-        const requiredFields: (keyof AssistanceData)[] = [
-            "dni", "nombre", "fecha"
+        const requiredFields = [
+            "dni", "nombre", "fecha", "observacion"
         ];
 
         const missingFields = requiredFields.filter((field) => !(field in data));
@@ -67,7 +66,7 @@ export const handler: Handler = async (event, context) => {
         }
 
         // Asumo que updateAssistance es async y devuelve { status: string; message?: string }
-        const responseData = await updateDescansos(data);
+        const responseData = await updateObservaciones(data);
 
         if (responseData.status === "success") {
             return {
@@ -75,7 +74,7 @@ export const handler: Handler = async (event, context) => {
                 headers: headers,
                 body: JSON.stringify({
                     status: "success",
-                    message: `Descansos actualizados.`,
+                    message: `Observaciones actualizadas.`,
                 }),
             };
         } else {
@@ -89,7 +88,7 @@ export const handler: Handler = async (event, context) => {
             };
         }
     } catch (err) {
-        console.error("Error en updateDescansos:", err);
+        console.error("Error en updateObservaciones:", err);
         return {
             statusCode: 500,
             headers: headers,

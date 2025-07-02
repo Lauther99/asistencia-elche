@@ -35,7 +35,7 @@ const Verificacion: React.FC = () => {
         const password_ = password
         if (worker?.role === "admin") {
             setIsLoading(true)
-            if (password_+password_ === worker?.dni) {
+            if (password_ + password_ === worker?.dni) {
                 try {
                     await login(dni_, password_, worker?.role || "admin");
                     navigate("/admin")
@@ -62,7 +62,8 @@ const Verificacion: React.FC = () => {
             setIsLoading(true)
             if (isSubmitable) {
                 await login(dni_, password_, worker?.role || "worker");
-                window.location.reload();
+                navigate("/asistencia")
+                // window.location.reload();
             } else {
                 alert("Complete el dni y contraseña")
             }
@@ -85,18 +86,18 @@ const Verificacion: React.FC = () => {
 
     return (
         <div className='component-container'>
-            <LoadingComponent flag={isLoading} />
-            <form onSubmit={(e) => handleSubmit(e)} style={{
-                width: "100%",
-                height: "500px",
-                maxWidth: "300px",
-                display: "flex",
-                flexDirection: "column",
-                gap: "12px",
-                alignItems: "center",
-                margin: "auto"
-            }}>
-                {/* {
+            <div className='container'>
+                <LoadingComponent flag={isLoading} />
+                <form onSubmit={(e) => handleSubmit(e)} style={{
+                    width: "100%",
+                    maxWidth: "300px",
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: "12px",
+                    alignItems: "center",
+                    margin: "auto"
+                }}>
+                    {/* {
                     id?.toLocaleLowerCase() === "admin" && (
                         <div className='form-item'>
                             <label htmlFor="dni">DNI</label>
@@ -114,45 +115,45 @@ const Verificacion: React.FC = () => {
                         </div>
                     )
                 } */}
-                <div className='form-item'>
-                    <label htmlFor="password">Contraseña</label>
-                    <input
-                        type={showPassword ? 'text' : 'password'}
-                        maxLength={8}
-                        inputMode="numeric"
-                        id="password"
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                        required
-                        style={{ paddingRight: '2rem' }}
-                    />
-                    <button
-                        type="button"
-                        onClick={() => setShowPassword(!showPassword)}
-                    >
-                        {showPassword ? '🙈' : '👁️'}
-                    </button>
-                </div>
-                <div style={{
-                    width: "100%",
-                    marginTop: "1rem",
-                    position: "relative",
-                }} >
+                    <div className='form-item'>
+                        <label htmlFor="password">Contraseña</label>
+                        <input
+                            type={showPassword ? 'text' : 'password'}
+                            maxLength={8}
+                            inputMode="numeric"
+                            id="password"
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                            required
+                            style={{ paddingRight: '2rem' }}
+                        />
+                        <button
+                            type="button"
+                            onClick={() => setShowPassword(!showPassword)}
+                        >
+                            {showPassword ? '🙈' : '👁️'}
+                        </button>
+                    </div>
                     <div style={{
-                        position: "absolute",
-                        backgroundColor: "#1a1a1a66",
                         width: "100%",
-                        height: "100%",
-                        borderRadius: "8px",
-                        top: "0",
-                        left: "0",
-                    }} className={`${isSubmitable ? "hidden" : ""}`} />
-                    <button type="submit" className={`register-btn submit ${isSubmitable ? "green" : ""}`}>
-                        <img src={SendSVG} alt=""></img>
-                    </button>
-                </div>
-            </form>
-            {/* {
+                        marginTop: "1rem",
+                        position: "relative",
+                    }} >
+                        <div style={{
+                            position: "absolute",
+                            backgroundColor: "#1a1a1a66",
+                            width: "100%",
+                            height: "100%",
+                            borderRadius: "8px",
+                            top: "0",
+                            left: "0",
+                        }} className={`${isSubmitable ? "hidden" : ""}`} />
+                        <button type="submit" className={`register-btn submit ${isSubmitable ? "green" : ""}`}>
+                            <img src={SendSVG} alt=""></img>
+                        </button>
+                    </div>
+                </form>
+                {/* {
                 false && (
                     <div className='verificacion'>
                         <button onClick={handleSubmit}>
@@ -165,6 +166,7 @@ const Verificacion: React.FC = () => {
                     </div>
                 )
             } */}
+            </div>
         </div>
     );
 };
