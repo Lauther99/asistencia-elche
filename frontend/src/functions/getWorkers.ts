@@ -1,4 +1,4 @@
-interface Workers {
+export interface Workers {
   index: string,
   nombre: string,
   dni: string,
