@@ -23,7 +23,7 @@ const DescansoPopup: React.FC<Props> = ({ workers, onClose }) => {
     const selectedWorker = workers.find(w => w.dni === selectedWorkerId);
     const [selectedDay, setSelectedDay] = React.useState<Date | null>(null);
     const [showToast, setShowToast] = React.useState(false);
-    const [toastProperties, setToastProperties] = React.useState<ToastProperties>({message: "", toastClassname: ""});
+    const [toastProperties, setToastProperties] = React.useState<ToastProperties>({ message: "", toastClassname: "" });
 
 
     const onDateSelect = (day: Date) => {
@@ -74,7 +74,13 @@ const DescansoPopup: React.FC<Props> = ({ workers, onClose }) => {
             }
 
         } catch (error) {
-            console.error(error)
+            setToastProperties({
+                message: error?.toString() || "",
+                toastClassname: "toast-error"
+            })
+            setShowToast(true);
+            setTimeout(() => setShowToast(false), 3000);
+            console.error("Error:", error);
         } finally {
             setIsLoading(false)
         }

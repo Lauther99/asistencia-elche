@@ -5,6 +5,7 @@ import { format, addSeconds } from "date-fns";
 import { es } from "date-fns/locale";
 import LoadingComponent from '../../components/LoadingComponent';
 import { useAuth } from '../../components/AuthProvider';
+import AsistenciaPopup from './popups/AsistenciaPopup';
 
 
 const base = import.meta.env.VITE_BASE_BACKEND_URL
@@ -13,7 +14,7 @@ const decrypt_token_url = base + "/decryptData"
 
 const Asistencia: React.FC = () => {
     const { logout } = useAuth();
-    
+
     const date = new Date();
     const now = new TZDate(date, "America/Lima");
     const navigate = useNavigate();
@@ -24,6 +25,7 @@ const Asistencia: React.FC = () => {
     const [nombre, setNombre] = useState("");
     const [dni, setDni] = useState("");
     const [isLoading, setIsLoading] = useState<boolean>(true);
+    const [abrirObervacionPopup, setAbrirObservacionPopup] = useState<boolean>(false);
     const [currentDate, setCurrentDate] = useState(now);
 
     const [isVisible, setIsVisible] = useState(true);
@@ -154,83 +156,103 @@ const Asistencia: React.FC = () => {
         }
     };
 
-
-
-
     return (
-        <div className='container'>
-            <LoadingComponent flag={isLoading} />
-            <div style={{
-                margin: "auto",
-                width: "100%",
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "center",
-                gap: "4px"
-            }}>
-                <h1 style={{
-                    fontSize: "1.8rem",
-                    textAlign: "center",
-                    margin: "0",
-                    lineHeight: "1.5",
-                    color: "#f1c40f"
-                }}>
-                    {nombre}
-                </h1>
-                <h2 style={{
-                    fontSize: "4rem",
-                    textAlign: "center",
-                    margin: "0.2rem 0",
-                    fontWeight: "bold"
-                }}>
-                    {format(currentDate, 'pp', { locale: es })}
-                </h2>
-                <h4 style={{
-                    fontSize: "1.5rem",
-                    textAlign: "center",
-                    color: "bdc3c7",
-                    margin: "0",
-                    fontWeight: "400"
-                }}>
-                    {format(currentDate, 'PPPP', { locale: es })}
-                </h4>
-            </div>
-
-            <div
-                style={{
-                    display: "grid",
-                    gridTemplateColumns: "1fr",
-                    gap: "12px",
-                    width: "100%",
+        <div className='component-container'>
+            <div className='container'>
+                <LoadingComponent flag={isLoading} />
+                <div style={{
                     margin: "auto",
-                }}
-            >
-                <button
-                    className="check-assistance-btn entrada"
-                    style={{ display: isVisible ? 'block' : 'none' }}
-                    onClick={() => updateAssistance("entrada")}>
-                    Entrada 1
-                </button>
-                <button
-                    className="check-assistance-btn salida"
-                    style={{ display: isVisible ? 'block' : 'none' }}
-                    onClick={() => updateAssistance("descanso_inicio")}>
-                    Salida 1
-                </button>
-                <button
-                    className="check-assistance-btn entrada2"
-                    style={{ display: isVisible ? 'block' : 'none' }}
-                    onClick={() => updateAssistance("descanso_fin")}>
-                    Entrada 2
-                </button>
-                <button
-                    className="check-assistance-btn salida2"
-                    onClick={() => updateAssistance("salida")}>
-                    Salida 2
-                </button>
-                <button className="check-assistance-btn salir" onClick={() => {
-                    logout()
-                }}>Salir</button>
+                    width: "100%",
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "center",
+                    gap: "4px"
+                }}>
+                    <h1 style={{
+                        fontSize: "1.8rem",
+                        textAlign: "center",
+                        margin: "0",
+                        lineHeight: "1.5",
+                        color: "#f1c40f"
+                    }}>
+                        {nombre}
+                    </h1>
+                    <h2 style={{
+                        fontSize: "4rem",
+                        textAlign: "center",
+                        margin: "0.2rem 0",
+                        fontWeight: "bold"
+                    }}>
+                        {format(currentDate, 'pp', { locale: es })}
+                    </h2>
+                    <h4 style={{
+                        fontSize: "1.5rem",
+                        textAlign: "center",
+                        color: "bdc3c7",
+                        margin: "0",
+                        fontWeight: "400"
+                    }}>
+                        {format(currentDate, 'PPPP', { locale: es })}
+                    </h4>
+                </div>
+
+                <div
+                    style={{
+                        display: "grid",
+                        gridTemplateColumns: "1fr",
+                        gap: "12px",
+                        width: "100%",
+                        margin: "auto",
+                    }}
+                >
+                    <div className="assistance-grid">
+                        <button
+                            className="check-assistance-btn entrada"
+                            onClick={() => updateAssistance("entrada")}
+                            disabled={!isVisible}
+                        >
+                            Entrada 1
+                        </button>
+                        <button
+                            className="check-assistance-btn entrada2"
+                            onClick={() => updateAssistance("descanso_fin")}
+                            disabled={!isVisible}
+                        >
+                            Entrada 2
+                        </button>
+                        <button
+                            className="check-assistance-btn salida"
+                            onClick={() => updateAssistance("descanso_inicio")}
+                            disabled={!isVisible}
+                        >
+                            Salida 1
+                        </button>
+                        <button
+                            className="check-assistance-btn salida2"
+                            onClick={() => updateAssistance("salida")}
+                        >
+                            Salida 2
+                        </button>
+                    </div>
+                    <p>¿Hubo algún error o te olvidaste de marcar entrada? <span style={{ color: "yellow" }}><b>Envía una observación aquí</b></span></p>
+                    <button
+                        className="check-assistance-btn observacion"
+                        onClick={() => setAbrirObservacionPopup(true)}>
+                        ¿Tienes alguna observación?
+                    </button>
+                    {abrirObervacionPopup && (
+                        <AsistenciaPopup
+                            workerInfo={{ 
+                                "nombre": nombre, 
+                                "dni": dni,
+                            }}
+                            onClose={() => setAbrirObservacionPopup(false)}
+                        />
+                    )}
+                    <button className="check-assistance-btn salir" onClick={() => {
+                        logout()
+                    }}>Salir</button>
+                </div>
             </div>
         </div>
     );

@@ -21,30 +21,8 @@ const Inicio: React.FC = () => {
   }
 
   return (
-    <>
-      <div
-        style={{
-          display: "flex",
-          flexDirection: "column",
-          justifyContent: "center", // Centra verticalmente
-          alignItems: "center", // Centra horizontalmente
-          margin: "auto",
-          width: "100%",
-          maxWidth: "350px",
-          height: "300px", // Ajusta según necesidad
-          position: "absolute",
-          top: "50%",
-          left: "50%",
-          transform: "translate(-50%, -50%)",
-          borderRadius: "10px",
-          padding: "24px",
-          boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.2)", // Sombra sutil
-          color: "white",
-          textAlign: "center",
-          backgroundColor: "#242424",
-          gap: "12px"
-        }}
-      >
+    <div className='component-container'>
+      <div className='container'>
         <img
           src={logo} alt="Logo restaurante Donde el Che"
           style={{
@@ -72,7 +50,7 @@ const Inicio: React.FC = () => {
           <button onClick={() => handleVerify(selectedWorker?.index)} style={{ width: "300px" }}>Validar</button>
         </div>
       </div>
-    </>
+    </div>
   );
 };
 
