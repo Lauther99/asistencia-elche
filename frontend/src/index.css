@@ -294,10 +294,46 @@ body {
   border: 1px solid #e1e1e1;
 }
 
-.hidden{
-  display: none;
+.blur-image-wrapper {
+  position: relative;
+  width: 200px;
+  height: 140px;
+  overflow: hidden;
 }
 
+.blur-image-wrapper img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  position: absolute;
+  top: 0;
+  left: 0;
+  transition: opacity 0.5s ease;
+}
+
+.blur-image-placeholder {
+  filter: blur(20px);
+  transform: scale(1.05);
+  opacity: 1;
+  z-index: 1;
+}
+
+.blur-image-main {
+  opacity: 0;
+  z-index: 2;
+}
+
+.blur-image-main.visible {
+  opacity: 1;
+}
+
+.hidden{
+  opacity: 0;
+}
+
+.hidden2{
+  display: none;
+}
 
 .verificacion img{
   width: 100%;
@@ -629,6 +665,16 @@ p{
   border: none;
 }
 
+.verificacion-form{
+    width: 100%;
+    max-width: 300px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    align-items: center;
+    margin: auto;
+}
+
 @keyframes toast-slide-in {
   0% {
     opacity: 0;
@@ -695,10 +741,17 @@ p{
     width: 95%;
     height: 100vh;
     max-width: none;
-    min-height: none;
     border-radius: 0;
     padding: 0;
     box-shadow: none;
+    justify-content: flex-start;
+    align-items: center;
+    min-height: 100vh;
+  }
+
+  .verificacion-form{
+    margin: 0;
+    margin-top: 16px;
   }
 
   .popup-overlay {
@@ -739,8 +792,6 @@ p{
   .toast{
     width: 80%;
   }
-
-  
 
   .calendar-day {
     padding: 0;
