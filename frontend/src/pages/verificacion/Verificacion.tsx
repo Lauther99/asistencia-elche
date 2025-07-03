@@ -88,33 +88,7 @@ const Verificacion: React.FC = () => {
         <div className='component-container'>
             <div className='container'>
                 <LoadingComponent flag={isLoading} />
-                <form onSubmit={(e) => handleSubmit(e)} style={{
-                    width: "100%",
-                    maxWidth: "300px",
-                    display: "flex",
-                    flexDirection: "column",
-                    gap: "12px",
-                    alignItems: "center",
-                    margin: "auto"
-                }}>
-                    {/* {
-                    id?.toLocaleLowerCase() === "admin" && (
-                        <div className='form-item'>
-                            <label htmlFor="dni">DNI</label>
-                            <input
-                                type="text"
-                                minLength={8}
-                                maxLength={8}
-                                pattern="[0-9]*"
-                                inputMode="numeric"
-                                id="dni"
-                                value={dniNumber}
-                                onChange={(e) => setDniNumber(e.target.value)}
-                                required
-                            />
-                        </div>
-                    )
-                } */}
+                <form onSubmit={(e) => handleSubmit(e)} className='verificacion-form'>
                     <div className='form-item'>
                         <label htmlFor="password">Contraseña</label>
                         <input
@@ -147,25 +121,12 @@ const Verificacion: React.FC = () => {
                             borderRadius: "8px",
                             top: "0",
                             left: "0",
-                        }} className={`${isSubmitable ? "hidden" : ""}`} />
+                        }} className={`${isSubmitable ? "hidden2" : ""}`} />
                         <button type="submit" className={`register-btn submit ${isSubmitable ? "green" : ""}`}>
                             <img src={SendSVG} alt=""></img>
                         </button>
                     </div>
                 </form>
-                {/* {
-                false && (
-                    <div className='verificacion'>
-                        <button onClick={handleSubmit}>
-                            <img src={FingerSVG} alt="Fingerprint Icon"></img>
-                        </button>
-                        <button onClick={() => navigate('/verificacion/f')}>
-                            <img src={FaceSVG} alt="Face ID Icon"></img>
-                        </button>
-
-                    </div>
-                )
-            } */}
             </div>
         </div>
     );

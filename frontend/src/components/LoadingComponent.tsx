@@ -17,7 +17,7 @@ const LoadingComponent: React.FC<LoadingProps> = ({ flag }) => {
 
 
     return (
-        <div className={`${!isLoading ? "hidden" : "loading-container"}`}>
+        <div className={`${!isLoading ? "hidden2" : "loading-container"}`}>
             <div className='loading-dots'></div>
             <div className='loading-dots'></div>
             <div className='loading-dots'></div>

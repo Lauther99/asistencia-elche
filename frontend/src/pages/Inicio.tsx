@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { workers } from '../functions/getWorkers';
 import logo from '../assets/logo.jpg'
+import blurLogo from '../assets/image.png'
+import BlurImage from '../components/BlurImage';
 
 const Inicio: React.FC = () => {
   const navigate = useNavigate();
@@ -23,13 +25,7 @@ const Inicio: React.FC = () => {
   return (
     <div className='component-container'>
       <div className='container'>
-        <img
-          src={logo} alt="Logo restaurante Donde el Che"
-          style={{
-            "width": "200px",
-            "padding": "16px"
-          }}
-        />
+        <BlurImage src={logo} placeholderSrc={blurLogo} alt="Logo restaurante Donde el Che"/>
         <div style={{
           display: "flex",
           flexDirection: "column",
