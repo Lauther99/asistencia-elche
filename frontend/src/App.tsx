@@ -8,7 +8,7 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import PublicRoute from "./components/PublicRoute";
 import { AuthProvider } from './components/AuthProvider';
 import Admin from "./pages/admin/Admin";
-// import Registro from "./pages/registro/Registro";  // Componente de registro
+import Registro from "./pages/registro/Registro";  // Componente de registro
 
 
 const App: React.FC = () => {
@@ -26,14 +26,14 @@ const App: React.FC = () => {
             }
           />
 
-          {/* <Route
+          <Route
             path="/registro"
             element={
-              <PublicRoute>
+              <ProtectedRoute>
                 <Registro />
-              </PublicRoute>
+              </ProtectedRoute>
             }
-          /> */}
+          />
 
           <Route
             path="/verificacion/:id"
