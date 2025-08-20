@@ -206,6 +206,8 @@ const Asistencia: React.FC = () => {
                     }}
                 >
                     <div className="assistance-grid">
+                        <p>Turno Mañana</p>
+                        <p>Turno Tarde</p>
                         <button
                             className="check-assistance-btn entrada"
                             onClick={() => updateAssistance("entrada")}

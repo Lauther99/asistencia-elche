@@ -73,6 +73,10 @@ const Admin: React.FC = () => {
             >
                 <h1 style={{ fontSize: "32px" }}>{adminData?.name}</h1>
                 <button className="admin-options-btn entrada"
+                    onClick={() => navigate(`/registro`)}>
+                    Registrar
+                </button>
+                <button className="admin-options-btn entrada"
                     onClick={() => setAbrirPopupDescanso(true)}>
                     Asignar descansos
                 </button>

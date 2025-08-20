@@ -14,6 +14,7 @@ export const workers: Workers[] = [
   { index: "006", nombre: "JOSE VALLADARES", dni: "25729326", role: "worker" },
   { index: "007", nombre: "BRENDY CHERO", dni: "43857335", role: "worker" },
   { index: "008", nombre: "YOVANY RIVAS", dni: "03898576", role: "worker" },
+  { index: "009", nombre: "JEANCARLO QUEREVALU", dni: "71538331", role: "worker" },
   { index: "admin1", nombre: "JOSE BENITES", dni: "88888888", role: "admin" },
   { index: "admin2", nombre: "LAUTHER VALLADARES", dni: "99999999", role: "admin" },
 ];
